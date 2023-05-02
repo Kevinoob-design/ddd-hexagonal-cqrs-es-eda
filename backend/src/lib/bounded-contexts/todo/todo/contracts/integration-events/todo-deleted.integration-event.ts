@@ -1,43 +1,34 @@
 import { Infra } from '@bitloops/bl-boilerplate-core';
-import { TodoDeletedDomainEvent } from '../../domain/events/todo-deleted.event';
-
-export type IntegrationSchemaV1 = {
-  todoId: string;
-  userId: string;
-};
-
-type IntegrationSchemas = IntegrationSchemaV1;
+import { TodoDeletedDomainEvent } from '../../domain/events/todo-deleted.domain-event';
+import { IntegrationTodoDeletedSchemaV1 } from '../../structs/integration-todo-deleted-schema-v-1.struct';
+type TIntegrationSchemas = IntegrationTodoDeletedSchemaV1;
 type ToIntegrationDataMapper = (
-  data: TodoDeletedDomainEvent,
-) => IntegrationSchemas;
-
+  event: TodoDeletedDomainEvent
+) => TIntegrationSchemas;
 export class TodoDeletedIntegrationEvent extends Infra.EventBus
-  .IntegrationEvent<IntegrationSchemas> {
+  .IntegrationEvent<TIntegrationSchemas> {
+  public static readonly boundedContextId = 'todo';
   static versions = ['v1'];
-  public static readonly boundedContextId = 'Todo';
   static versionMappers: Record<string, ToIntegrationDataMapper> = {
-    v1: TodoDeletedIntegrationEvent.toIntegrationDataV1,
+    v1: TodoDeletedIntegrationEvent.toIntegrationDatav1,
   };
-  public metadata: Infra.EventBus.TIntegrationEventMetadata;
-
-  constructor(payload: IntegrationSchemas, version: string) {
-    super('Todo', payload, version);
+  constructor(payload: TIntegrationSchemas, version: string) {
+    super(TodoDeletedIntegrationEvent.boundedContextId, payload, version);
   }
-
   static create(event: TodoDeletedDomainEvent): TodoDeletedIntegrationEvent[] {
     return TodoDeletedIntegrationEvent.versions.map((version) => {
       const mapper = TodoDeletedIntegrationEvent.versionMappers[version];
-      const data = mapper(event);
-      return new TodoDeletedIntegrationEvent(data, version);
+      const payload = mapper(event);
+      return new TodoDeletedIntegrationEvent(payload, version);
     });
   }
-
-  static toIntegrationDataV1(
-    event: TodoDeletedDomainEvent,
-  ): IntegrationSchemaV1 {
-    return {
+  static toIntegrationDatav1(
+    event: TodoDeletedDomainEvent
+  ): IntegrationTodoDeletedSchemaV1 {
+    const todoDeleted = {
       todoId: event.payload.aggregateId,
       userId: event.payload.userId,
     };
+    return todoDeleted;
   }
 }

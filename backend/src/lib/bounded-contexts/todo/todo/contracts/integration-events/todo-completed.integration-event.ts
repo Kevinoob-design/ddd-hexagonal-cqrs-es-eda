@@ -1,44 +1,36 @@
 import { Infra } from '@bitloops/bl-boilerplate-core';
-import { TodoCompletedDomainEvent } from '../../domain/events/todo-completed.event';
-
-export type IntegrationSchemaV1 = {
-  todoId: string;
-  userId: string;
-};
-
-type IntegrationSchemas = IntegrationSchemaV1;
+import { TodoCompletedDomainEvent } from '../../domain/events/todo-completed.domain-event';
+import { IntegrationTodoCompletedSchemaV1 } from '../../structs/integration-todo-completed-schema-v-1.struct';
+type TIntegrationSchemas = IntegrationTodoCompletedSchemaV1;
 type ToIntegrationDataMapper = (
-  data: TodoCompletedDomainEvent,
-) => IntegrationSchemas;
-
+  event: TodoCompletedDomainEvent
+) => TIntegrationSchemas;
 export class TodoCompletedIntegrationEvent extends Infra.EventBus
-  .IntegrationEvent<IntegrationSchemas> {
+  .IntegrationEvent<TIntegrationSchemas> {
+  public static readonly boundedContextId = 'todo';
   static versions = ['v1'];
-  public static readonly boundedContextId = 'Todo';
   static versionMappers: Record<string, ToIntegrationDataMapper> = {
-    v1: TodoCompletedIntegrationEvent.toIntegrationDataV1,
+    v1: TodoCompletedIntegrationEvent.toIntegrationDatav1,
   };
-
-  constructor(payload: IntegrationSchemas, version: string) {
-    super('Todo', payload, version);
+  constructor(payload: TIntegrationSchemas, version: string) {
+    super(TodoCompletedIntegrationEvent.boundedContextId, payload, version);
   }
-
   static create(
-    event: TodoCompletedDomainEvent,
+    event: TodoCompletedDomainEvent
   ): TodoCompletedIntegrationEvent[] {
     return TodoCompletedIntegrationEvent.versions.map((version) => {
       const mapper = TodoCompletedIntegrationEvent.versionMappers[version];
-      const data = mapper(event);
-      return new TodoCompletedIntegrationEvent(data, version);
+      const payload = mapper(event);
+      return new TodoCompletedIntegrationEvent(payload, version);
     });
   }
-
-  static toIntegrationDataV1(
-    event: TodoCompletedDomainEvent,
-  ): IntegrationSchemaV1 {
-    return {
+  static toIntegrationDatav1(
+    event: TodoCompletedDomainEvent
+  ): IntegrationTodoCompletedSchemaV1 {
+    const todoCompleted = {
       todoId: event.payload.aggregateId,
       userId: event.payload.userId,
     };
+    return todoCompleted;
   }
 }

@@ -1,17 +1,11 @@
 import { Application } from '@bitloops/bl-boilerplate-core';
-
-export type TCompleteTodoCommand = {
+type TCompleteTodoCommand = {
   todoId: string;
 };
-
 export class CompleteTodoCommand extends Application.Command {
-  public id: string;
-
-  constructor(
-    props: TCompleteTodoCommand,
-    metadata?: Partial<Application.TCommandMetadata>,
-  ) {
-    super('Todo', metadata);
-    this.id = props.todoId;
+  public readonly todoId: string;
+  constructor(completeTodoRequestDTO: TCompleteTodoCommand) {
+    super('todo');
+    this.todoId = completeTodoRequestDTO.todoId;
   }
 }

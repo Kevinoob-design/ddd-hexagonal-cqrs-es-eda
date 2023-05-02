@@ -1,47 +1,37 @@
 import { Infra } from '@bitloops/bl-boilerplate-core';
-import { TodoModifiedTitleDomainEvent } from '../../domain/events/todo-modified-title.event';
-
-export type IntegrationSchemaV1 = {
-  todoId: string;
-  userId: string;
-  title: string;
-};
-
-type IntegrationSchemas = IntegrationSchemaV1;
+import { TodoTitleModifiedDomainEvent } from '../../domain/events/todo-title-modified.domain-event';
+import { IntegrationTodoModifiedTitleSchemaV1 } from '../../structs/integration-todo-modified-title-schema-v-1.struct';
+type TIntegrationSchemas = IntegrationTodoModifiedTitleSchemaV1;
 type ToIntegrationDataMapper = (
-  data: TodoModifiedTitleDomainEvent,
-) => IntegrationSchemas;
-
+  event: TodoTitleModifiedDomainEvent
+) => TIntegrationSchemas;
 export class TodoModifiedTitleIntegrationEvent extends Infra.EventBus
-  .IntegrationEvent<IntegrationSchemas> {
+  .IntegrationEvent<TIntegrationSchemas> {
+  public static readonly boundedContextId = 'todo';
   static versions = ['v1'];
-  public static readonly boundedContextId = 'Todo';
   static versionMappers: Record<string, ToIntegrationDataMapper> = {
-    v1: TodoModifiedTitleIntegrationEvent.toIntegrationDataV1,
+    v1: TodoModifiedTitleIntegrationEvent.toIntegrationDatav1,
   };
-  public metadata: Infra.EventBus.TIntegrationEventMetadata;
-
-  constructor(payload: IntegrationSchemas, version: string) {
-    super('Todo', payload, version);
+  constructor(payload: TIntegrationSchemas, version: string) {
+    super(TodoModifiedTitleIntegrationEvent.boundedContextId, payload, version);
   }
-
   static create(
-    event: TodoModifiedTitleDomainEvent,
+    event: TodoTitleModifiedDomainEvent
   ): TodoModifiedTitleIntegrationEvent[] {
     return TodoModifiedTitleIntegrationEvent.versions.map((version) => {
       const mapper = TodoModifiedTitleIntegrationEvent.versionMappers[version];
-      const data = mapper(event);
-      return new TodoModifiedTitleIntegrationEvent(data, version);
+      const payload = mapper(event);
+      return new TodoModifiedTitleIntegrationEvent(payload, version);
     });
   }
-
-  static toIntegrationDataV1(
-    event: TodoModifiedTitleDomainEvent,
-  ): IntegrationSchemaV1 {
-    return {
+  static toIntegrationDatav1(
+    event: TodoTitleModifiedDomainEvent
+  ): IntegrationTodoModifiedTitleSchemaV1 {
+    const todoTitleModified = {
       todoId: event.payload.aggregateId,
       title: event.payload.title,
       userId: event.payload.userId,
     };
+    return todoTitleModified;
   }
 }

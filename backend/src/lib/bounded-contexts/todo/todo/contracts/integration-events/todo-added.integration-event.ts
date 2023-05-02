@@ -1,49 +1,35 @@
-import { Domain, Infra } from '@bitloops/bl-boilerplate-core';
-import { TodoAddedDomainEvent } from '../../domain/events/todo-added.event';
-
-export type IntegrationSchemaV1 = {
-  todoId: string;
-  title: string;
-  userId: string;
-};
-
-type IntegrationSchemas = IntegrationSchemaV1;
+import { Infra } from '@bitloops/bl-boilerplate-core';
+import { TodoAddedDomainEvent } from '../../domain/events/todo-added.domain-event';
+import { IntegrationTodoAddedSchemaV1 } from '../../structs/integration-todo-added-schema-v-1.struct';
+type TIntegrationSchemas = IntegrationTodoAddedSchemaV1;
 type ToIntegrationDataMapper = (
-  data: TodoAddedDomainEvent,
-) => IntegrationSchemas;
-
+  event: TodoAddedDomainEvent
+) => TIntegrationSchemas;
 export class TodoAddedIntegrationEvent extends Infra.EventBus
-  .IntegrationEvent<IntegrationSchemas> {
+  .IntegrationEvent<TIntegrationSchemas> {
+  public static readonly boundedContextId = 'todo';
   static versions = ['v1'];
-  public static readonly boundedContextId = 'Todo';
   static versionMappers: Record<string, ToIntegrationDataMapper> = {
-    v1: TodoAddedIntegrationEvent.toIntegrationDataV1,
+    v1: TodoAddedIntegrationEvent.toIntegrationDatav1,
   };
-
-  constructor(payload: IntegrationSchemas, version: string) {
-    super('Todo', payload, version);
+  constructor(payload: TIntegrationSchemas, version: string) {
+    super(TodoAddedIntegrationEvent.boundedContextId, payload, version);
   }
-
   static create(event: TodoAddedDomainEvent): TodoAddedIntegrationEvent[] {
     return TodoAddedIntegrationEvent.versions.map((version) => {
       const mapper = TodoAddedIntegrationEvent.versionMappers[version];
-      const data = mapper(event);
-      return new TodoAddedIntegrationEvent(data, version);
+      const payload = mapper(event);
+      return new TodoAddedIntegrationEvent(payload, version);
     });
   }
-
-  static toIntegrationDataV1(event: TodoAddedDomainEvent): IntegrationSchemaV1 {
-    return {
+  static toIntegrationDatav1(
+    event: TodoAddedDomainEvent
+  ): IntegrationTodoAddedSchemaV1 {
+    const todoAdded = {
       todoId: event.payload.aggregateId,
       title: event.payload.title,
       userId: event.payload.userId,
     };
-  }
-
-  static getEventTopic(version?: string) {
-    const topic = `integration.${TodoAddedIntegrationEvent.name}`;
-
-    const eventTopic = version === undefined ? topic : `${topic}.${version}`;
-    return eventTopic;
+    return todoAdded;
   }
 }

@@ -1,15 +1,14 @@
 import { Application } from '@bitloops/bl-boilerplate-core';
-export type TModifyTodoTitleCommand = {
-  id: string;
+type TModifyTodoTitleCommand = {
   title: string;
+  id: string;
 };
 export class ModifyTodoTitleCommand extends Application.Command {
-  public readonly id: string;
   public readonly title: string;
-
-  constructor(modifyTitleTodo: TModifyTodoTitleCommand) {
-    super('Todo');
-    this.id = modifyTitleTodo.id;
-    this.title = modifyTitleTodo.title;
+  public readonly id: string;
+  constructor(modifyTodoTitleRequestDTO: TModifyTodoTitleCommand) {
+    super('todo');
+    this.title = modifyTodoTitleRequestDTO.title;
+    this.id = modifyTodoTitleRequestDTO.id;
   }
 }

@@ -1,25 +1,21 @@
 import { Domain, Either, ok, fail } from '@bitloops/bl-boilerplate-core';
-import { DomainErrors } from './errors';
-import { Rules } from './rules';
-
-interface TitleProps {
-  title: string;
-}
-
+import { TitleProps } from './title.props';
+import { DomainErrors } from './errors/index';
+import { DomainRules } from './rules/index';
 export class TitleVO extends Domain.ValueObject<TitleProps> {
-  get title(): string {
-    return this.props.title;
-  }
-
   private constructor(props: TitleProps) {
     super(props);
   }
-
   public static create(
-    props: TitleProps,
+    props: TitleProps
   ): Either<TitleVO, DomainErrors.TitleOutOfBoundsError> {
-    const res = Domain.applyRules([new Rules.TitleOutOfBounds(props.title)]);
+    const res = Domain.applyRules([
+      new DomainRules.TitleOutOfBoundsRule(props.title),
+    ]);
     if (res) return fail(res);
     return ok(new TitleVO(props));
+  }
+  get title(): string {
+    return this.props.title;
   }
 }

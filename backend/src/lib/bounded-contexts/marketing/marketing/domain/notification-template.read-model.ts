@@ -1,25 +1,20 @@
-export type TNotificationTemplateSnapshot = {
+export type TNotificationTemplateReadModelSnapshot = {
   id: string;
   type: string;
   template: string;
 };
-
 export class NotificationTemplateReadModel {
-  constructor(
-    public readonly id: string,
-    public readonly type: string,
-    public readonly template: string,
-  ) {}
-
-  public static readonly firstTodo = 'firstTodo';
-
+  public id: string;
+  public type: string;
+  public template: string;
+  constructor(props: TNotificationTemplateReadModelSnapshot) {
+    this.id = props.id;
+    this.type = props.type;
+    this.template = props.template;
+  }
   static fromPrimitives(
-    snapshot: TNotificationTemplateSnapshot,
+    snapshot: TNotificationTemplateReadModelSnapshot
   ): NotificationTemplateReadModel {
-    return new NotificationTemplateReadModel(
-      snapshot.id,
-      snapshot.type,
-      snapshot.template,
-    );
+    return new NotificationTemplateReadModel(snapshot);
   }
 }

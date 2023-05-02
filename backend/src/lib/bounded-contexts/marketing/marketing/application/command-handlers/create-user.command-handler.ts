@@ -1,74 +1,69 @@
 import {
   Application,
-  ok,
   Either,
   Domain,
   fail,
+  ok,
 } from '@bitloops/bl-boilerplate-core';
-import { Inject } from '@nestjs/common';
-import { CreateUserCommand } from '../../commands/create-user.command';
 import { Traceable } from '@bitloops/bl-boilerplate-infra-telemetry';
-import { UserEntity } from '../../domain/user.entity';
-import { EmailVO } from '../../domain/email.value-object';
-import { CompletedTodosVO } from '../../domain/completed-todos.value-object';
-import { UserWriteRepoPort } from '../../ports/user-write.repo-port';
+import { CreateUserCommand } from '../../commands/create-user.command';
+import { Inject } from '@nestjs/common';
 import { UserWriteRepoPortToken } from '../../constants';
-
-type CreateUserCommandHandlerResponse = Either<
+import { UserWriteRepoPort } from '../../ports/user-write.repo-port';
+import { CompletedTodosVO } from '../../domain/completed-todos.value-object';
+import { EmailVO } from '../../domain/email.value-object';
+import { UserEntity } from '../../domain/user.entity';
+export type CreateUserCommandHandlerResponse = Either<
   void,
   Application.Repo.Errors.Unexpected
 >;
-
 export class CreateUserCommandHandler
   implements Application.ICommandHandler<CreateUserCommand, void>
 {
   constructor(
     @Inject(UserWriteRepoPortToken)
-    private userRepo: UserWriteRepoPort,
+    private readonly userRepo: UserWriteRepoPort
   ) {}
-
   get command() {
     return CreateUserCommand;
   }
-
   get boundedContext(): string {
-    return 'Marketing';
+    return 'marketing';
   }
-
   @Traceable({
-    operation: '[Marketing] CreateUserCommandHandler',
-    serviceName: 'marketing',
+    operation: 'CreateUserCommandHandler',
     metrics: {
-      name: '[Marketing] CreateUserCommandHandler',
+      name: 'CreateUserCommandHandler',
       category: 'commandHandler',
     },
   })
   async execute(
-    command: CreateUserCommand,
+    command: CreateUserCommand
   ): Promise<CreateUserCommandHandlerResponse> {
-    const requestUserId = new Domain.UUIDv4(command.userId);
-
-    const completedTodosVO = CompletedTodosVO.create({ counter: 0 });
-    if (completedTodosVO.isFail()) {
-      return fail(completedTodosVO.value);
+    const userId = new Domain.UUIDv4(command.userId);
+    const completedTodos = CompletedTodosVO.create({ counter: 0 });
+    if (!completedTodos.isFail()) {
+      const email = EmailVO.create({ email: command.email });
+      if (!email.isFail()) {
+        const user = UserEntity.create({
+          completedTodos: completedTodos.value,
+          email: email.value,
+          id: userId,
+        });
+        if (!user.isFail()) {
+          const saveResult = await this.userRepo.save(user.value);
+          if (saveResult.isFail()) {
+            return fail(saveResult.value);
+          }
+          return ok();
+        } else {
+          return fail(user.value);
+        }
+      } else {
+        return fail(email.value);
+      }
+    } else {
+      return fail(completedTodos.value);
     }
-    const emailVO = EmailVO.create({ email: command.email });
-    if (emailVO.isFail()) {
-      return fail(emailVO.value);
-    }
-    const user = UserEntity.create({
-      completedTodos: completedTodosVO.value,
-      email: emailVO.value,
-      id: requestUserId,
-    });
-    if (user.isFail()) {
-      return fail(user.value);
-    }
-
-    const createOrError = await this.userRepo.save(user.value);
-    if (createOrError.isFail()) {
-      return fail(createOrError.value);
-    }
-    return ok();
   }
 }

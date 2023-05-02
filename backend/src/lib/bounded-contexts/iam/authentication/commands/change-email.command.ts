@@ -1,16 +1,14 @@
 import { Application } from '@bitloops/bl-boilerplate-core';
-import { ChangeEmailCommandDTO } from '../dtos/change-email-command.dto';
-export type TChangeEmailCommand = {
-  userId: string;
+type TChangeEmailCommand = {
   email: string;
+  userId: string;
 };
 export class ChangeEmailCommand extends Application.Command {
-  public readonly userId: string;
   public readonly email: string;
-
-  constructor(changeEmailCommandDTO: ChangeEmailCommandDTO) {
-    super('IAM');
-    this.userId = changeEmailCommandDTO.userId;
-    this.email = changeEmailCommandDTO.email;
+  public readonly userId: string;
+  constructor(changeEmailRequestDTO: TChangeEmailCommand) {
+    super('iam');
+    this.email = changeEmailRequestDTO.email;
+    this.userId = changeEmailRequestDTO.userId;
   }
 }

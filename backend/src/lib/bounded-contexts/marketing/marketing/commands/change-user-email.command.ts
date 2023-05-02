@@ -1,16 +1,14 @@
 import { Application } from '@bitloops/bl-boilerplate-core';
-export type TChangeUserEmailCommand = {
+type TChangeUserEmailCommand = {
   email: string;
   userId: string;
 };
-
 export class ChangeUserEmailCommand extends Application.Command {
-  public email: string;
-  public userId: string;
-
-  constructor(props: TChangeUserEmailCommand) {
-    super('Marketing');
-    this.email = props.email;
-    this.userId = props.userId;
+  public readonly email: string;
+  public readonly userId: string;
+  constructor(changeUserEmailRequestDTO: TChangeUserEmailCommand) {
+    super('marketing');
+    this.email = changeUserEmailRequestDTO.email;
+    this.userId = changeUserEmailRequestDTO.userId;
   }
 }

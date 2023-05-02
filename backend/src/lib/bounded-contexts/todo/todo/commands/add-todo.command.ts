@@ -1,14 +1,11 @@
 import { Application } from '@bitloops/bl-boilerplate-core';
-
-export type TAddTodoCommand = {
+type TAddTodoCommand = {
   title: string;
 };
-
 export class AddTodoCommand extends Application.Command {
-  public title: string;
-
-  constructor(props: TAddTodoCommand) {
-    super('Todo');
-    this.title = props.title;
+  public readonly title: string;
+  constructor(addTodoRequestDTO: TAddTodoCommand) {
+    super('todo');
+    this.title = addTodoRequestDTO.title;
   }
 }
