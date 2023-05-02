@@ -1,8 +1,9 @@
+
 import { Injectable, Inject } from '@nestjs/common';
 import { Collection, MongoClient } from 'mongodb';
 import * as jwtwebtoken from 'jsonwebtoken';
-import { NotificationTemplateReadRepoPort } from '@src/lib/bounded-contexts/marketing/marketing/ports/notification-template-read.repo-port';
-import { NotificationTemplateReadModel } from '@src/lib/bounded-contexts/marketing/marketing/domain/notification-template.read-model';
+import { TodoReadRepoPort } from '@lib/bounded-contexts/todo/todo/ports/todo-read.repo-port';
+import { TodoReadModel } from '@lib/bounded-contexts/todo/todo/domain/todo.read-model';
 import { AuthEnvironmentVariables } from '@src/config/auth.configuration';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -13,12 +14,9 @@ import {
 } from '@bitloops/bl-boilerplate-core';
 
 @Injectable()
-export class NotificationTemplateReadRepository
-  implements NotificationTemplateReadRepoPort
-{
-  private collectionName =
-    process.env.MONGO_DB_TODO_COLLECTION || 'notificationTemplates';
-  private dbName = process.env.MONGO_DB_DATABASE || 'marketing';
+export class MongoTodoReadRepository implements TodoReadRepoPort {
+  private collectionName = process.env.MONGO_DB_TODO_COLLECTION || 'todos';
+  private dbName = process.env.MONGO_DB_DATABASE || 'todo';
   private collection: Collection;
   private JWT_SECRET: string;
   constructor(
@@ -32,62 +30,10 @@ export class NotificationTemplateReadRepository
   }
 
   @Application.Repo.Decorators.ReturnUnexpectedError()
-  async getByType(
-    type: string,
-  ): Promise<
-    Either<
-      NotificationTemplateReadModel | null,
-      Application.Repo.Errors.Unexpected
-    >
-  > {
-    const ctx = asyncLocalStorage.getStore()?.get('context');
-    const { jwt } = ctx;
-    let jwtPayload: null | any = null;
-    try {
-      jwtPayload = jwtwebtoken.verify(jwt, this.JWT_SECRET);
-    } catch (err) {
-      throw new Error('Invalid JWT!');
-    }
-    const result = await this.collection.findOne({
-      type,
-    });
-
-    if (!result) {
-      return ok(null);
-    }
-
-    //TODO check this because there is no userId in the notification template
-    // if (result.type !== jwtPayload.userId) {
-    //     throw new Error('Invalid type');
-    // }
-
-    const { _id, ...todo } = result as any;
-    return ok(
-      NotificationTemplateReadModel.fromPrimitives({
-        ...todo,
-        id: _id.toString(),
-      }),
-    );
-  }
-
-  @Application.Repo.Decorators.ReturnUnexpectedError()
-  async getAll(): Promise<
-    Either<
-      NotificationTemplateReadModel[] | null,
-      Application.Repo.Errors.Unexpected
-    >
-  > {
-    throw new Error('Method not implemented');
-  }
-
-  @Application.Repo.Decorators.ReturnUnexpectedError()
   async getById(
     id: string,
   ): Promise<
-    Either<
-      NotificationTemplateReadModel | null,
-      Application.Repo.Errors.Unexpected
-    >
+    Either<TodoReadModel | null, Application.Repo.Errors.Unexpected>
   > {
     const ctx = asyncLocalStorage.getStore()?.get('context');
     const { jwt } = ctx;
@@ -111,10 +57,42 @@ export class NotificationTemplateReadRepository
 
     const { _id, ...todo } = result as any;
     return ok(
-      NotificationTemplateReadModel.fromPrimitives({
+      TodoReadModel.fromPrimitives({
         ...todo,
         id: _id.toString(),
       }),
     );
   }
+
+  @Application.Repo.Decorators.ReturnUnexpectedError()
+  async getAll(): Promise<
+    Either<TodoReadModel[], Application.Repo.Errors.Unexpected>
+  > {
+    const ctx = asyncLocalStorage.getStore()?.get('context');
+    const { jwt } = ctx;
+    let jwtPayload: null | any = null;
+    try {
+      jwtPayload = jwtwebtoken.verify(jwt, this.JWT_SECRET);
+    } catch (err) {
+      throw new Error('Invalid JWT!');
+    }
+    const userId = jwtPayload.sub;
+    if (!userId) {
+      throw new Error('Invalid userId');
+    }
+    const results = await this.collection
+      .find({ userId: { id: userId } })
+      .toArray();
+
+    return ok(
+      results.map((result) => {
+        const { _id, ...todo } = result as any;
+        return TodoReadModel.fromPrimitives({
+          ...todo,
+          id: _id.toString(),
+        });
+      }),
+    );
+  }
 }
+    

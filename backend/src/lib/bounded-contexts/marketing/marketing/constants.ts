@@ -20,16 +20,16 @@
 export const StreamingCommandBusToken = Symbol('StreamingCommandBusToken');
 export const PubSubQueryBusToken = Symbol('PubSubQueryBusToken');
 export const StreamingIntegrationEventBusToken = Symbol(
-  'StreamingIntegrationEventBusToken'
+  'StreamingIntegrationEventBusToken',
 );
 export const StreamingDomainEventBusToken = Symbol(
-  'StreamingDomainEventBusToken'
+  'StreamingDomainEventBusToken',
 );
 export const PubSubIntegrationEventBusToken = Symbol(
-  'PubSubIntegrationEventBusToken'
+  'PubSubIntegrationEventBusToken',
 );
 export const EmailServicePortToken = Symbol('EmailServicePortToken');
 export const UserWriteRepoPortToken = Symbol('UserWriteRepoPortToken');
 export const NotificationTemplateReadRepoPortToken = Symbol(
-  'NotificationTemplateReadRepoPortToken'
+  'NotificationTemplateReadRepoPortToken',
 );

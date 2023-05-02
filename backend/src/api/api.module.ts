@@ -1,7 +1,6 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './authentication.controller';
-import { TodoController } from './todo.rest.controller';
 import { TodoGrpcController } from './todo.grpc.controller';
 import {
   JetstreamModule,
@@ -13,16 +12,13 @@ import authConfiguration, {
   AuthEnvironmentVariables,
 } from '@src/config/auth.configuration';
 import { AuthModule } from '@bitloops/bl-boilerplate-infra-nest-auth-passport';
-import {
-  // CorrelationIdMiddleware,
-  TracingModule,
-} from '@bitloops/bl-boilerplate-infra-telemetry';
+import { TracingModule } from '@bitloops/bl-boilerplate-infra-telemetry';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.development.env', // TODO make dynamic
+      envFilePath: '.development.env',
       load: [configuration, authConfiguration],
     }),
     AuthModule.forRootAsync({
@@ -50,7 +46,6 @@ import {
         }),
         inject: [ConfigService],
       },
-      // TODO fix this
       integrationEventBus: NatsStreamingIntegrationEventBus as any,
     }),
     JetstreamModule.forRoot({
@@ -65,11 +60,6 @@ import {
       messageBus: NatsStreamingMessageBus,
     }),
   ],
-  controllers: [AuthController, TodoController, TodoGrpcController],
+  controllers: [AuthController, TodoGrpcController],
 })
-// implements NestModule
-export class ApiModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer.apply(CorrelationIdMiddleware).forRoutes('*');
-  // }
-}
+export class ApiModule {}

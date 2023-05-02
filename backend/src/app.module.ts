@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TodoModule } from './bounded-contexts/todo/todo/todo.module';
 import { MarketingModule } from './bounded-contexts/marketing/marketing/marketing.module';
-import { IamModule } from './bounded-contexts/iam/iam/iam.module';
+import { AuthenticationModule } from './bounded-contexts/iam/authentication/authentication.module';
 import {
   JetstreamModule,
   NatsStreamingMessageBus,
@@ -43,7 +43,7 @@ import { TracingModule } from '@bitloops/bl-boilerplate-infra-telemetry';
 
     TodoModule,
     MarketingModule,
-    IamModule,
+    AuthenticationModule,
     TracingModule.register({
       messageBus: NatsStreamingMessageBus,
     }),
