@@ -17,7 +17,7 @@ export class TodoAddedPublishPubSubIntegrationDomainEventHandler
     @Inject(StreamingIntegrationEventBusToken)
     private readonly integrationEventBus: Infra.EventBus.IEventBus,
     @Inject(PubSubIntegrationEventBusToken)
-    private readonly pubSubIntegrationEventBus: Infra.EventBus.IEventBus
+    private readonly pubSubIntegrationEventBus: Infra.EventBus.IEventBus,
   ) {}
   get event() {
     return TodoAddedDomainEvent;
@@ -33,7 +33,7 @@ export class TodoAddedPublishPubSubIntegrationDomainEventHandler
     },
   })
   public async handle(
-    event: TodoAddedDomainEvent
+    event: TodoAddedDomainEvent,
   ): Promise<Either<void, never>> {
     const events = TodoAddedIntegrationEvent.create(event);
     await this.pubSubIntegrationEventBus.publish(events);

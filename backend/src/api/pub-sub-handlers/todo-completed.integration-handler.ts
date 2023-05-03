@@ -41,7 +41,6 @@ export class TodoCompletedPubSubIntegrationEventHandler
           const todoObject = new todo.Todo({
             id: payload.todoId,
             userId: payload.userId,
-            completed: true,
           });
           const message = new todo.OnEvent({
             onCompleted: todoObject,

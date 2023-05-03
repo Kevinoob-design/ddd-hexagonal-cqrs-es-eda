@@ -302,8 +302,8 @@ function App(props: { service: TodoServiceClient }): JSX.Element {
         setTodos(
           response
             .getOk()
-            ?.getTodosList()
-            .map((todo) => todo.toObject()) || []
+            ?.getTodoList()
+            .map((todos) => todos.toObject()) || []
         );
       }
     } catch (error: any) {
@@ -332,8 +332,8 @@ function App(props: { service: TodoServiceClient }): JSX.Element {
         if (response.hasError()) {
           console.log(response);
           const error = response.getError();
-          if (error?.getInvalidtitlelengtherror()) {
-            const message = error?.getInvalidtitlelengtherror()?.getMessage();
+          if (error?.getUnexpectederror()) {
+            const message = error?.getUnexpectederror()?.getMessage();
             if (message)
               setErrorMessage('Title must be at least 3 characters long!');
           } else {
