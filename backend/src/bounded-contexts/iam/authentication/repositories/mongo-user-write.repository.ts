@@ -40,6 +40,54 @@
         }
       
         @Application.Repo.Decorators.ReturnUnexpectedError()
+        async getById(
+          id: Domain.UUIDv4,
+        ): Promise<Either<UserEntity | null, Application.Repo.Errors.Unexpected>> {
+          const ctx = asyncLocalStorage.getStore()?.get('context');
+          const { jwt } = ctx;
+          let jwtPayload: null | any = null;
+          try {
+            jwtPayload = jwtwebtoken.verify(jwt, this.JWT_SECRET);
+          } catch (err) {
+            throw new Error('Invalid JWT!');
+          }
+          const result = await this.collection.findOne({
+            _id: id.toString() as any,
+          });
+      
+          if (!result) {
+            return ok(null);
+          }
+      
+          if (result.id !== jwtPayload.sub) {
+            throw new Error('Invalid userId');
+          }
+      
+          const { _id, ...user } = result as any;
+          return ok(
+            UserEntity.fromPrimitives({
+              ...user,
+              id: _id.toString(),
+            }),
+          );
+        }
+      
+        @Application.Repo.Decorators.ReturnUnexpectedError()
+        async save(
+          user: UserEntity,
+        ): Promise<Either<void, Application.Repo.Errors.Unexpected>> {
+          const createdUser = user.toPrimitives();
+      
+          await this.collection.insertOne({
+            _id: createdUser.id as any,
+            ...createdUser,
+          });
+      
+          this.domainEventBus.publish(user.domainEvents);
+          return ok();
+        }
+      
+        @Application.Repo.Decorators.ReturnUnexpectedError()
         async update(
           user: UserEntity,
         ): Promise<Either<void, Application.Repo.Errors.Unexpected>> {
@@ -74,54 +122,6 @@
           aggregate: UserEntity,
         ): Promise<Either<void, Application.Repo.Errors.Unexpected>> {
           throw new Error('Method not implemented.');
-        }
-      
-        @Application.Repo.Decorators.ReturnUnexpectedError()
-        async getById(
-          id: Domain.UUIDv4,
-        ): Promise<Either<UserEntity | null, Application.Repo.Errors.Unexpected>> {
-          const ctx = asyncLocalStorage.getStore()?.get('context');
-          const { jwt } = ctx;
-          let jwtPayload: null | any = null;
-          try {
-            jwtPayload = jwtwebtoken.verify(jwt, this.JWT_SECRET);
-          } catch (err) {
-            throw new Error('Invalid JWT!');
-          }
-          const result = await this.collection.findOne({
-            _id: id.toString() as any,
-          });
-      
-          if (!result) {
-            return ok(null);
-          }
-      
-          if (result.id !== jwtPayload.sub) {
-            throw new Error('Invalid userId');
-          }
-      
-          const { _id, ...todo } = result as any;
-          return ok(
-            UserEntity.fromPrimitives({
-              ...todo,
-              id: _id.toString(),
-            }),
-          );
-        }
-      
-        @Application.Repo.Decorators.ReturnUnexpectedError()
-        async save(
-          user: UserEntity,
-        ): Promise<Either<void, Application.Repo.Errors.Unexpected>> {
-          const createdUser = user.toPrimitives();
-      
-          await this.collection.insertOne({
-            _id: createdUser.id as any,
-            ...createdUser,
-          });
-      
-          this.domainEventBus.publish(user.domainEvents);
-          return ok();
         }
       }
       

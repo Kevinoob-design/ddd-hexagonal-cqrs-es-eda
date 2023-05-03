@@ -1,24 +1,28 @@
 import { Module } from '@nestjs/common';
 import {
   JetstreamModule,
-  NatsPubSubIntegrationEventsBus,
   NatsPubSubQueryBus,
+  NatsPubSubIntegrationEventsBus,
   NatsStreamingCommandBus,
   NatsStreamingDomainEventBus,
   NatsStreamingIntegrationEventBus,
 } from '@bitloops/bl-boilerplate-infra-nest-jetstream';
 import { MongoModule } from '@bitloops/bl-boilerplate-infra-mongo';
 import { AuthenticationModule as LibAuthenticationModule } from '@lib/bounded-contexts/iam/authentication/authentication.module';
-import { StreamingCommandHandlers } from '@lib/bounded-contexts/iam/authentication/application/command-handlers';
+import {
+  PubSubCommandHandlers,
+  StreamingCommandHandlers,
+} from '@lib/bounded-contexts/iam/authentication/application/command-handlers';
+import { QueryHandlers } from '@lib/bounded-contexts/iam/authentication/application/query-handlers';
 import { StreamingDomainEventHandlers } from '@lib/bounded-contexts/iam/authentication/application/event-handlers/domain';
 import { StreamingIntegrationEventHandlers } from '@lib/bounded-contexts/iam/authentication/application/event-handlers/integration';
 import {
-  PubSubIntegrationEventBusToken,
+  UserWriteRepoPortToken,
   PubSubQueryBusToken,
+  PubSubIntegrationEventBusToken,
   StreamingCommandBusToken,
   StreamingDomainEventBusToken,
   StreamingIntegrationEventBusToken,
-  UserWriteRepoPortToken,
 } from '@lib/bounded-contexts/iam/authentication/constants';
 import { MongoUserWriteRepository } from './repositories/mongo-user-write.repository';
 
@@ -26,6 +30,14 @@ const providers = [
   {
     provide: UserWriteRepoPortToken,
     useClass: MongoUserWriteRepository,
+  },
+  {
+    provide: PubSubQueryBusToken,
+    useClass: NatsPubSubQueryBus,
+  },
+  {
+    provide: PubSubIntegrationEventBusToken,
+    useClass: NatsPubSubIntegrationEventsBus,
   },
   {
     provide: StreamingCommandBusToken,
@@ -39,16 +51,7 @@ const providers = [
     provide: StreamingIntegrationEventBusToken,
     useClass: NatsStreamingIntegrationEventBus,
   },
-  {
-    provide: PubSubIntegrationEventBusToken,
-    useClass: NatsPubSubIntegrationEventsBus,
-  },
-  {
-    provide: PubSubQueryBusToken,
-    useClass: NatsPubSubQueryBus,
-  },
 ];
-
 @Module({
   imports: [
     LibAuthenticationModule.register({
@@ -58,8 +61,10 @@ const providers = [
     JetstreamModule.forFeature({
       moduleOfHandlers: AuthenticationModule,
       streamingCommandHandlers: [...StreamingCommandHandlers],
+      pubSubCommandHandlers: [...PubSubCommandHandlers],
       streamingDomainEventHandlers: [...StreamingDomainEventHandlers],
       streamingIntegrationEventHandlers: [...StreamingIntegrationEventHandlers],
+      pubSubQueryHandlers: [...QueryHandlers],
     }),
   ],
   exports: [LibAuthenticationModule],

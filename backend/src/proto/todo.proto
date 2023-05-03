@@ -7,6 +7,8 @@
     rpc Add(AddTodoRequest) returns (AddTodoResponse);
     rpc ModifyTitle(ModifyTitleTodoRequest) returns (ModifyTitleTodoResponse);
     rpc Complete(CompleteTodoRequest) returns (CompleteTodoResponse);
+    rpc Uncomplete(UncompleteTodoRequest) returns (UncompleteTodoResponse);
+    rpc Delete(DeleteTodoRequest) returns (DeleteTodoResponse);
     rpc GetAll(GetAllTodosRequest) returns (GetAllTodosResponse);
     rpc InitializeSubscriptionConnection(InitializeConnectionRequest) returns (InitializeConnectionResponse);
     rpc KeepSubscriptionAlive(KeepSubscriptionAliveRequest) returns (KeepSubscriptionAliveResponse);
@@ -29,6 +31,8 @@
     ADDED = 0;
     MODIFIED_TITLE = 1;
     DELETED = 2;
+    COMPLETED = 3;
+    UNCOMPLETED = 4;
   }
   
   message OnTodoRequest {
@@ -41,6 +45,8 @@
       Todo onAdded = 1;
       Todo onModifiedTitle = 2;
       Todo onDeleted = 3;
+      Todo onCompleted = 4;
+      Todo onUncompleted = 5;
     }
   }
   
@@ -86,8 +92,8 @@
   message ModifyTitleTodoErrorResponse {
     oneof error {
       ErrorResponse todoNotFoundError = 1;
-      ErrorResponse unexpectedError = 2;
-      ErrorResponse titleOutOfBoundsError = 3;
+      ErrorResponse titleOutOfBoundsError = 2;
+      ErrorResponse unexpectedError = 3;
     }
   }
   
@@ -107,12 +113,53 @@
   message CompleteTodoErrorResponse {
     oneof error {
       ErrorResponse todoNotFoundError = 1;
-      ErrorResponse unexpectedError = 2;
-      ErrorResponse todoAlreadyCompletedError = 3;
+      ErrorResponse todoAlreadyCompletedError = 2;
+      ErrorResponse unexpectedError = 3;
     }
   }
   
   message CompleteTodoOKResponse {}
+  
+  message UncompleteTodoRequest {
+    string id = 1;
+  }
+  
+  message UncompleteTodoResponse {
+    oneof result {
+      UncompleteTodoOKResponse ok = 1;
+      UncompleteTodoErrorResponse error = 2;
+    }
+  }
+  
+  message UncompleteTodoErrorResponse {
+    oneof error {
+      ErrorResponse todoNotFoundError = 1;
+      ErrorResponse todoAlreadyUncompletedError = 2;
+      ErrorResponse unexpectedError = 3;
+    }
+  }
+  
+  message UncompleteTodoOKResponse {}
+  
+  message DeleteTodoRequest {
+    string id = 1;
+  }
+  
+  message DeleteTodoResponse {
+    oneof result {
+      DeleteTodoOKResponse ok = 1;
+      DeleteTodoErrorResponse error = 2;
+    }
+  }
+  
+  message DeleteTodoErrorResponse {
+    oneof error {
+      ErrorResponse todoNotFoundError = 1;
+      ErrorResponse unexpectedError = 2;
+    }
+  }
+  
+  message DeleteTodoOKResponse {}
   
   message GetAllTodosRequest {}
   

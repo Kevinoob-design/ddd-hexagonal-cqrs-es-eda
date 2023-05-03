@@ -10,8 +10,8 @@
       import { Injectable, Inject } from '@nestjs/common';
       import { Collection, MongoClient } from 'mongodb';
       import * as jwtwebtoken from 'jsonwebtoken';
-      import { TodoWriteRepoPort } from '@lib/bounded-contexts/todo/todo/ports/todo-write.repo-port';
       import { TodoEntity } from '@lib/bounded-contexts/todo/todo/domain/todo.entity';
+      import { TodoWriteRepoPort } from '@lib/bounded-contexts/todo/todo/ports/todo-write.repo-port';
       import { ConfigService } from '@nestjs/config';
       import { AuthEnvironmentVariables } from '@src/config/auth.configuration';
       import { StreamingDomainEventBusToken } from '@lib/bounded-contexts/todo/todo/constants';

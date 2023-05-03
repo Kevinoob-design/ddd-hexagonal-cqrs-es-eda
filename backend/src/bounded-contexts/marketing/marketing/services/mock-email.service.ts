@@ -7,7 +7,7 @@ import { SendEmailRequest } from '@lib/bounded-contexts/marketing/marketing/stru
 @Injectable()
 export class MockEmailService implements EmailServicePort {
   async send(
-    email: SendEmailRequest,
+    email: SendEmailRequest
   ): Promise<Either<void, Application.Repo.Errors.Unexpected>> {
     console.log('MockEmailService sending email:', email);
     return ok();

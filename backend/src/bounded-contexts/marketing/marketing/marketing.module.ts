@@ -1,27 +1,28 @@
 
 import { Module } from '@nestjs/common';
 import {
-  NatsStreamingCommandBus,
   JetstreamModule,
+  NatsPubSubQueryBus,
+  NatsPubSubIntegrationEventsBus,
+  NatsStreamingCommandBus,
   NatsStreamingDomainEventBus,
   NatsStreamingIntegrationEventBus,
-  NatsPubSubIntegrationEventsBus,
-  NatsPubSubQueryBus,
 } from '@bitloops/bl-boilerplate-infra-nest-jetstream';
 import { MongoModule } from '@bitloops/bl-boilerplate-infra-mongo';
 import { MarketingModule as LibMarketingModule } from '@lib/bounded-contexts/marketing/marketing/marketing.module';
 import { StreamingIntegrationEventHandlers } from '@lib/bounded-contexts/marketing/marketing/application/event-handlers/integration';
-import { StreamingCommandHandlers } from '@lib/bounded-contexts/marketing/marketing/application/command-handlers';
+import { PubSubCommandHandlers, StreamingCommandHandlers } from '@lib/bounded-contexts/marketing/marketing/application/command-handlers';
+import { QueryHandlers } from '@lib/bounded-contexts/marketing/marketing/application/query-handlers';
 import { StreamingDomainEventHandlers } from '@lib/bounded-contexts/marketing/marketing/application/event-handlers/domain';
 import {
+  UserWriteRepoPortToken,
   EmailServicePortToken,
   NotificationTemplateReadRepoPortToken,
+  PubSubQueryBusToken,
   PubSubIntegrationEventBusToken,
   StreamingCommandBusToken,
   StreamingDomainEventBusToken,
   StreamingIntegrationEventBusToken,
-  UserWriteRepoPortToken,
-  PubSubQueryBusToken,
 } from '@lib/bounded-contexts/marketing/marketing/constants';
 import { MongoUserWriteRepository } from './repositories/mongo-user-write.repository';
 import { MongoNotificationTemplateReadRepository } from './repositories/mongo-notification-template-read.repository';
@@ -41,6 +42,14 @@ const providers = [
     useClass: MockEmailService,
   },
   {
+    provide: PubSubQueryBusToken,
+    useClass: NatsPubSubQueryBus,
+  },
+  {
+    provide: PubSubIntegrationEventBusToken,
+    useClass: NatsPubSubIntegrationEventsBus,
+  },
+  {
     provide: StreamingCommandBusToken,
     useClass: NatsStreamingCommandBus,
   },
@@ -51,14 +60,6 @@ const providers = [
   {
     provide: StreamingIntegrationEventBusToken,
     useClass: NatsStreamingIntegrationEventBus,
-  },
-  {
-    provide: PubSubIntegrationEventBusToken,
-    useClass: NatsPubSubIntegrationEventsBus,
-  },
-  {
-    provide: PubSubQueryBusToken,
-    useClass: NatsPubSubQueryBus,
   }
 ];
 @Module({
@@ -72,6 +73,8 @@ const providers = [
       streamingIntegrationEventHandlers: [...StreamingIntegrationEventHandlers],
       streamingDomainEventHandlers: [...StreamingDomainEventHandlers],
       streamingCommandHandlers: [...StreamingCommandHandlers],
+      pubSubCommandHandlers: [...PubSubCommandHandlers],
+      pubSubQueryHandlers: [...QueryHandlers],
     }),
   ],
   exports: [LibMarketingModule],

@@ -81,7 +81,13 @@ export class MongoNotificationTemplateReadRepository
     } catch (err) {
       throw new Error('Invalid JWT!');
     }
-    const results = await this.collection.find().toArray();
+    const userId = jwtPayload.sub;
+    if (!userId) {
+      throw new Error('Invalid userId');
+    }
+    const results = await this.collection
+      .find({ userId: { id: userId } })
+      .toArray();
 
     return ok(
       results.map((result) => {
@@ -117,6 +123,10 @@ export class MongoNotificationTemplateReadRepository
 
     if (!result) {
       return ok(null);
+    }
+
+    if (result.userId !== jwtPayload.sub) {
+      throw new Error('Invalid userId');
     }
 
     const { _id, ...todo } = result as any;

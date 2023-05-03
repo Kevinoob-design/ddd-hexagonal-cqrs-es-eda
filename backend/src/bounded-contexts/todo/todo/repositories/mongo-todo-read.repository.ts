@@ -1,4 +1,3 @@
-
 import { Injectable, Inject } from '@nestjs/common';
 import { Collection, MongoClient } from 'mongodb';
 import * as jwtwebtoken from 'jsonwebtoken';
@@ -8,8 +7,8 @@ import { AuthEnvironmentVariables } from '@src/config/auth.configuration';
 import { ConfigService } from '@nestjs/config';
 import {
   Application,
-  Either,
   asyncLocalStorage,
+  Either,
   ok,
 } from '@bitloops/bl-boilerplate-core';
 
@@ -32,9 +31,7 @@ export class MongoTodoReadRepository implements TodoReadRepoPort {
   @Application.Repo.Decorators.ReturnUnexpectedError()
   async getById(
     id: string,
-  ): Promise<
-    Either<TodoReadModel | null, Application.Repo.Errors.Unexpected>
-  > {
+  ): Promise<Either<TodoReadModel | null, Application.Repo.Errors.Unexpected>> {
     const ctx = asyncLocalStorage.getStore()?.get('context');
     const { jwt } = ctx;
     let jwtPayload: null | any = null;
@@ -86,13 +83,14 @@ export class MongoTodoReadRepository implements TodoReadRepoPort {
 
     return ok(
       results.map((result) => {
-        const { _id, ...todo } = result as any;
-        return TodoReadModel.fromPrimitives({
-          ...todo,
-          id: _id.toString(),
-        });
+        const res = {
+          id: result._id.toString(),
+          userId: result.userId.id,
+          title: result.title.title,
+          completed: result.completed,
+        };
+        return res;
       }),
     );
   }
 }
-    
