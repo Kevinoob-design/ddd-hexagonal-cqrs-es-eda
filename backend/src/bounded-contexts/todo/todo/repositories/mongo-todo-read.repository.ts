@@ -1,3 +1,4 @@
+
 import { Injectable, Inject } from '@nestjs/common';
 import { Collection, MongoClient } from 'mongodb';
 import * as jwtwebtoken from 'jsonwebtoken';
@@ -31,7 +32,9 @@ export class MongoTodoReadRepository implements TodoReadRepoPort {
   @Application.Repo.Decorators.ReturnUnexpectedError()
   async getById(
     id: string,
-  ): Promise<Either<TodoReadModel | null, Application.Repo.Errors.Unexpected>> {
+  ): Promise<
+    Either<TodoReadModel | null, Application.Repo.Errors.Unexpected>
+  > {
     const ctx = asyncLocalStorage.getStore()?.get('context');
     const { jwt } = ctx;
     let jwtPayload: null | any = null;
@@ -77,20 +80,20 @@ export class MongoTodoReadRepository implements TodoReadRepoPort {
     if (!userId) {
       throw new Error('Invalid userId');
     }
-    const results = await this.collection
+    const todos = await this.collection
       .find({ userId: { id: userId } })
       .toArray();
-
     return ok(
-      results.map((result) => {
+      todos.map((todo) => {
         const res = {
-          id: result._id.toString(),
-          userId: result.userId.id,
-          title: result.title.title,
-          completed: result.completed,
+          id: todo._id.toString(),
+          userId: todo.userId.id,
+          title: todo.title.title,
+          completed: todo.completed,
         };
         return res;
       }),
     );
   }
 }
+    

@@ -302,7 +302,7 @@ function App(props: { service: TodoServiceClient }): JSX.Element {
         setTodos(
           response
             .getOk()
-            ?.getTodoList()
+            ?.getTodosList()
             .map((todos) => todos.toObject()) || []
         );
       }

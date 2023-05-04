@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+
+  import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './authentication.controller';
 import { TodoGrpcController } from './todo.grpc.controller';
@@ -12,13 +13,15 @@ import authConfiguration, {
   AuthEnvironmentVariables,
 } from '@src/config/auth.configuration';
 import { AuthModule } from '@bitloops/bl-boilerplate-infra-nest-auth-passport';
-import { TracingModule } from '@bitloops/bl-boilerplate-infra-telemetry';
+import {
+  TracingModule,
+} from '@bitloops/bl-boilerplate-infra-telemetry';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.development.env',
+      envFilePath: '.development.env', 
       load: [configuration, authConfiguration],
     }),
     AuthModule.forRootAsync({
@@ -50,10 +53,10 @@ import { TracingModule } from '@bitloops/bl-boilerplate-infra-telemetry';
     }),
     JetstreamModule.forRoot({
       servers: [
-        `nats://${process.env.NATS_HOST ?? 'localhost'}:${
-          process.env.NATS_PORT ?? 4222
-        }`,
-      ],
+    `nats://${process.env.NATS_HOST ?? 'localhost'}:${
+      process.env.NATS_PORT ?? 4222
+    }`,
+  ]
     }),
 
     TracingModule.register({
@@ -62,4 +65,5 @@ import { TracingModule } from '@bitloops/bl-boilerplate-infra-telemetry';
   ],
   controllers: [AuthController, TodoGrpcController],
 })
-export class ApiModule {}
+export class ApiModule {
+}

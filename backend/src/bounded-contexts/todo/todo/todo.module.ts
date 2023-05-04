@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import {
   JetstreamModule,
@@ -10,10 +11,7 @@ import {
 import { MongoModule } from '@bitloops/bl-boilerplate-infra-mongo';
 import { TodoModule as LibTodoModule } from '@lib/bounded-contexts/todo/todo/todo.module';
 import { StreamingIntegrationEventHandlers } from '@lib/bounded-contexts/todo/todo/application/event-handlers/integration';
-import {
-  PubSubCommandHandlers,
-  StreamingCommandHandlers,
-} from '@lib/bounded-contexts/todo/todo/application/command-handlers';
+import { PubSubCommandHandlers, StreamingCommandHandlers } from '@lib/bounded-contexts/todo/todo/application/command-handlers';
 import { QueryHandlers } from '@lib/bounded-contexts/todo/todo/application/query-handlers';
 import { StreamingDomainEventHandlers } from '@lib/bounded-contexts/todo/todo/application/event-handlers/domain';
 import {
@@ -25,8 +23,8 @@ import {
   StreamingDomainEventBusToken,
   StreamingIntegrationEventBusToken,
 } from '@lib/bounded-contexts/todo/todo/constants';
-import { MongoTodoWriteRepository } from './repositories/mongo-todo-write.repository';
 import { MongoTodoReadRepository } from './repositories/mongo-todo-read.repository';
+import { MongoTodoWriteRepository } from './repositories/mongo-todo-write.repository';
 
 const providers = [
   {
@@ -66,10 +64,10 @@ const providers = [
     }),
     JetstreamModule.forFeature({
       moduleOfHandlers: TodoModule,
-      streamingIntegrationEventHandlers: [...StreamingIntegrationEventHandlers],
-      streamingDomainEventHandlers: [...StreamingDomainEventHandlers],
       streamingCommandHandlers: [...StreamingCommandHandlers],
       pubSubCommandHandlers: [...PubSubCommandHandlers],
+      streamingDomainEventHandlers: [...StreamingDomainEventHandlers],
+      streamingIntegrationEventHandlers: [...StreamingIntegrationEventHandlers],
       pubSubQueryHandlers: [...QueryHandlers],
     }),
   ],

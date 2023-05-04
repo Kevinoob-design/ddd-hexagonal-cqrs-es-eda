@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import {
   JetstreamModule,
@@ -7,12 +8,9 @@ import {
   NatsStreamingDomainEventBus,
   NatsStreamingIntegrationEventBus,
 } from '@bitloops/bl-boilerplate-infra-nest-jetstream';
-import { MongoModule } from '@bitloops/bl-boilerplate-infra-mongo';
+import { PostgresModule } from '@bitloops/bl-boilerplate-infra-postgres';
 import { AuthenticationModule as LibAuthenticationModule } from '@lib/bounded-contexts/iam/authentication/authentication.module';
-import {
-  PubSubCommandHandlers,
-  StreamingCommandHandlers,
-} from '@lib/bounded-contexts/iam/authentication/application/command-handlers';
+import { PubSubCommandHandlers, StreamingCommandHandlers } from '@lib/bounded-contexts/iam/authentication/application/command-handlers';
 import { QueryHandlers } from '@lib/bounded-contexts/iam/authentication/application/query-handlers';
 import { StreamingDomainEventHandlers } from '@lib/bounded-contexts/iam/authentication/application/event-handlers/domain';
 import { StreamingIntegrationEventHandlers } from '@lib/bounded-contexts/iam/authentication/application/event-handlers/integration';
@@ -24,12 +22,12 @@ import {
   StreamingDomainEventBusToken,
   StreamingIntegrationEventBusToken,
 } from '@lib/bounded-contexts/iam/authentication/constants';
-import { MongoUserWriteRepository } from './repositories/mongo-user-write.repository';
+import { PostgresUserWriteRepository } from './repositories/postgres-user-write.repository';
 
 const providers = [
   {
     provide: UserWriteRepoPortToken,
-    useClass: MongoUserWriteRepository,
+    useClass: PostgresUserWriteRepository,
   },
   {
     provide: PubSubQueryBusToken,
@@ -56,7 +54,7 @@ const providers = [
   imports: [
     LibAuthenticationModule.register({
       inject: [...providers],
-      imports: [MongoModule],
+      imports: [PostgresModule],
     }),
     JetstreamModule.forFeature({
       moduleOfHandlers: AuthenticationModule,

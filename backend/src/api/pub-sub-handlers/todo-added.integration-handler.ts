@@ -1,11 +1,10 @@
+
 import { Application, ok, Either } from '@bitloops/bl-boilerplate-core';
 import { TodoAddedIntegrationEvent } from '@lib/bounded-contexts/todo/todo/contracts/integration-events/todo-added.integration-event';
 import { todo } from '../../proto/generated/todo';
 import { Subscriptions, Subscribers } from '../todo.grpc.controller';
 
-export class TodoAddedPubSubIntegrationEventHandler
-  implements Application.IHandleIntegrationEvent
-{
+export class TodoAddedPubSubIntegrationEventHandler implements Application.IHandleIntegrationEvent {
   constructor(
     private readonly subscriptions: Subscriptions,
     private readonly subscribers: Subscribers,
@@ -19,20 +18,17 @@ export class TodoAddedPubSubIntegrationEventHandler
   }
 
   get version() {
-    return TodoAddedIntegrationEvent.versions[0];
+    return TodoAddedIntegrationEvent.versions[0]; 
   }
 
-  public async handle(
-    event: TodoAddedIntegrationEvent,
-  ): Promise<Either<void, never>> {
+  public async handle(event: TodoAddedIntegrationEvent): Promise<Either<void, never>> {
     console.log(
       '[TodoAddedIntegrationEvent]: Successfully received TodoAdded PubSub IntegrationEvent',
     );
     const { payload } = event;
 
     const { userId } = payload;
-    const subscription =
-      this.subscriptions[TodoAddedPubSubIntegrationEventHandler.name];
+    const subscription = this.subscriptions[TodoAddedPubSubIntegrationEventHandler.name];
     const subscriptionsSubscribers = subscription?.subscribers;
     if (subscriptionsSubscribers) {
       for (const subscriber of subscriptionsSubscribers) {
@@ -55,3 +51,5 @@ export class TodoAddedPubSubIntegrationEventHandler
     return ok();
   }
 }
+
+  
