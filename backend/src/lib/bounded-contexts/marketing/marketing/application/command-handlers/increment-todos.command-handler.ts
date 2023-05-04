@@ -21,7 +21,7 @@ export class IncrementTodosCommandHandler
 {
   constructor(
     @Inject(UserWriteRepoPortToken)
-    private readonly userRepo: UserWriteRepoPort
+    private readonly userRepo: UserWriteRepoPort,
   ) {}
   get command() {
     return IncrementTodosCommand;
@@ -37,7 +37,7 @@ export class IncrementTodosCommandHandler
     },
   })
   async execute(
-    command: IncrementTodosCommand
+    command: IncrementTodosCommand,
   ): Promise<IncrementTodosCommandHandlerResponse> {
     const userId = new Domain.UUIDv4(command.id);
     const userFound = await this.userRepo.getById(userId);

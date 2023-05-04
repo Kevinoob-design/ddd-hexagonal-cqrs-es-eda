@@ -107,20 +107,20 @@ export class OnEvent extends jspb.Message {
   hasOnadded(): boolean;
   clearOnadded(): OnEvent;
 
-  getOncompleted(): Todo | undefined;
-  setOncompleted(value?: Todo): OnEvent;
-  hasOncompleted(): boolean;
-  clearOncompleted(): OnEvent;
+  getOnmodifiedtitle(): Todo | undefined;
+  setOnmodifiedtitle(value?: Todo): OnEvent;
+  hasOnmodifiedtitle(): boolean;
+  clearOnmodifiedtitle(): OnEvent;
 
   getOndeleted(): Todo | undefined;
   setOndeleted(value?: Todo): OnEvent;
   hasOndeleted(): boolean;
   clearOndeleted(): OnEvent;
 
-  getOnmodifiedtitle(): Todo | undefined;
-  setOnmodifiedtitle(value?: Todo): OnEvent;
-  hasOnmodifiedtitle(): boolean;
-  clearOnmodifiedtitle(): OnEvent;
+  getOncompleted(): Todo | undefined;
+  setOncompleted(value?: Todo): OnEvent;
+  hasOncompleted(): boolean;
+  clearOncompleted(): OnEvent;
 
   getOnuncompleted(): Todo | undefined;
   setOnuncompleted(value?: Todo): OnEvent;
@@ -140,18 +140,18 @@ export class OnEvent extends jspb.Message {
 export namespace OnEvent {
   export type AsObject = {
     onadded?: Todo.AsObject,
-    oncompleted?: Todo.AsObject,
-    ondeleted?: Todo.AsObject,
     onmodifiedtitle?: Todo.AsObject,
+    ondeleted?: Todo.AsObject,
+    oncompleted?: Todo.AsObject,
     onuncompleted?: Todo.AsObject,
   }
 
   export enum EventCase { 
     EVENT_NOT_SET = 0,
     ONADDED = 1,
-    ONCOMPLETED = 2,
+    ONMODIFIEDTITLE = 2,
     ONDELETED = 3,
-    ONMODIFIEDTITLE = 4,
+    ONCOMPLETED = 4,
     ONUNCOMPLETED = 5,
   }
 }
@@ -231,15 +231,20 @@ export namespace AddTodoResponse {
 }
 
 export class AddTodoErrorResponse extends jspb.Message {
-  getTitleoutofboundserror(): ErrorResponse | undefined;
-  setTitleoutofboundserror(value?: ErrorResponse): AddTodoErrorResponse;
-  hasTitleoutofboundserror(): boolean;
-  clearTitleoutofboundserror(): AddTodoErrorResponse;
+  getUnauthorizederror(): ErrorResponse | undefined;
+  setUnauthorizederror(value?: ErrorResponse): AddTodoErrorResponse;
+  hasUnauthorizederror(): boolean;
+  clearUnauthorizederror(): AddTodoErrorResponse;
 
-  getUnexpectederror(): ErrorResponse | undefined;
-  setUnexpectederror(value?: ErrorResponse): AddTodoErrorResponse;
-  hasUnexpectederror(): boolean;
-  clearUnexpectederror(): AddTodoErrorResponse;
+  getSystemunavailableerror(): ErrorResponse | undefined;
+  setSystemunavailableerror(value?: ErrorResponse): AddTodoErrorResponse;
+  hasSystemunavailableerror(): boolean;
+  clearSystemunavailableerror(): AddTodoErrorResponse;
+
+  getInvalidtitlelengtherror(): ErrorResponse | undefined;
+  setInvalidtitlelengtherror(value?: ErrorResponse): AddTodoErrorResponse;
+  hasInvalidtitlelengtherror(): boolean;
+  clearInvalidtitlelengtherror(): AddTodoErrorResponse;
 
   getErrorCase(): AddTodoErrorResponse.ErrorCase;
 
@@ -253,14 +258,16 @@ export class AddTodoErrorResponse extends jspb.Message {
 
 export namespace AddTodoErrorResponse {
   export type AsObject = {
-    titleoutofboundserror?: ErrorResponse.AsObject,
-    unexpectederror?: ErrorResponse.AsObject,
+    unauthorizederror?: ErrorResponse.AsObject,
+    systemunavailableerror?: ErrorResponse.AsObject,
+    invalidtitlelengtherror?: ErrorResponse.AsObject,
   }
 
   export enum ErrorCase { 
     ERROR_NOT_SET = 0,
-    TITLEOUTOFBOUNDSERROR = 1,
-    UNEXPECTEDERROR = 2,
+    UNAUTHORIZEDERROR = 1,
+    SYSTEMUNAVAILABLEERROR = 2,
+    INVALIDTITLELENGTHERROR = 3,
   }
 }
 
@@ -279,6 +286,124 @@ export class AddTodoOKResponse extends jspb.Message {
 export namespace AddTodoOKResponse {
   export type AsObject = {
     id: string,
+  }
+}
+
+export class ModifyTitleTodoRequest extends jspb.Message {
+  getId(): string;
+  setId(value: string): ModifyTitleTodoRequest;
+
+  getTitle(): string;
+  setTitle(value: string): ModifyTitleTodoRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ModifyTitleTodoRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ModifyTitleTodoRequest): ModifyTitleTodoRequest.AsObject;
+  static serializeBinaryToWriter(message: ModifyTitleTodoRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoRequest;
+  static deserializeBinaryFromReader(message: ModifyTitleTodoRequest, reader: jspb.BinaryReader): ModifyTitleTodoRequest;
+}
+
+export namespace ModifyTitleTodoRequest {
+  export type AsObject = {
+    id: string,
+    title: string,
+  }
+}
+
+export class ModifyTitleTodoResponse extends jspb.Message {
+  getOk(): ModifyTitleTodoOKResponse | undefined;
+  setOk(value?: ModifyTitleTodoOKResponse): ModifyTitleTodoResponse;
+  hasOk(): boolean;
+  clearOk(): ModifyTitleTodoResponse;
+
+  getError(): ModifyTitleTodoErrorResponse | undefined;
+  setError(value?: ModifyTitleTodoErrorResponse): ModifyTitleTodoResponse;
+  hasError(): boolean;
+  clearError(): ModifyTitleTodoResponse;
+
+  getResultCase(): ModifyTitleTodoResponse.ResultCase;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ModifyTitleTodoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ModifyTitleTodoResponse): ModifyTitleTodoResponse.AsObject;
+  static serializeBinaryToWriter(message: ModifyTitleTodoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoResponse;
+  static deserializeBinaryFromReader(message: ModifyTitleTodoResponse, reader: jspb.BinaryReader): ModifyTitleTodoResponse;
+}
+
+export namespace ModifyTitleTodoResponse {
+  export type AsObject = {
+    ok?: ModifyTitleTodoOKResponse.AsObject,
+    error?: ModifyTitleTodoErrorResponse.AsObject,
+  }
+
+  export enum ResultCase { 
+    RESULT_NOT_SET = 0,
+    OK = 1,
+    ERROR = 2,
+  }
+}
+
+export class ModifyTitleTodoErrorResponse extends jspb.Message {
+  getUnauthorizederror(): ErrorResponse | undefined;
+  setUnauthorizederror(value?: ErrorResponse): ModifyTitleTodoErrorResponse;
+  hasUnauthorizederror(): boolean;
+  clearUnauthorizederror(): ModifyTitleTodoErrorResponse;
+
+  getSystemunavailableerror(): ErrorResponse | undefined;
+  setSystemunavailableerror(value?: ErrorResponse): ModifyTitleTodoErrorResponse;
+  hasSystemunavailableerror(): boolean;
+  clearSystemunavailableerror(): ModifyTitleTodoErrorResponse;
+
+  getTododoesnotexisterror(): ErrorResponse | undefined;
+  setTododoesnotexisterror(value?: ErrorResponse): ModifyTitleTodoErrorResponse;
+  hasTododoesnotexisterror(): boolean;
+  clearTododoesnotexisterror(): ModifyTitleTodoErrorResponse;
+
+  getInvalidtitlelengtherror(): ErrorResponse | undefined;
+  setInvalidtitlelengtherror(value?: ErrorResponse): ModifyTitleTodoErrorResponse;
+  hasInvalidtitlelengtherror(): boolean;
+  clearInvalidtitlelengtherror(): ModifyTitleTodoErrorResponse;
+
+  getErrorCase(): ModifyTitleTodoErrorResponse.ErrorCase;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ModifyTitleTodoErrorResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ModifyTitleTodoErrorResponse): ModifyTitleTodoErrorResponse.AsObject;
+  static serializeBinaryToWriter(message: ModifyTitleTodoErrorResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoErrorResponse;
+  static deserializeBinaryFromReader(message: ModifyTitleTodoErrorResponse, reader: jspb.BinaryReader): ModifyTitleTodoErrorResponse;
+}
+
+export namespace ModifyTitleTodoErrorResponse {
+  export type AsObject = {
+    unauthorizederror?: ErrorResponse.AsObject,
+    systemunavailableerror?: ErrorResponse.AsObject,
+    tododoesnotexisterror?: ErrorResponse.AsObject,
+    invalidtitlelengtherror?: ErrorResponse.AsObject,
+  }
+
+  export enum ErrorCase { 
+    ERROR_NOT_SET = 0,
+    UNAUTHORIZEDERROR = 1,
+    SYSTEMUNAVAILABLEERROR = 2,
+    TODODOESNOTEXISTERROR = 3,
+    INVALIDTITLELENGTHERROR = 4,
+  }
+}
+
+export class ModifyTitleTodoOKResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ModifyTitleTodoOKResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ModifyTitleTodoOKResponse): ModifyTitleTodoOKResponse.AsObject;
+  static serializeBinaryToWriter(message: ModifyTitleTodoOKResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoOKResponse;
+  static deserializeBinaryFromReader(message: ModifyTitleTodoOKResponse, reader: jspb.BinaryReader): ModifyTitleTodoOKResponse;
+}
+
+export namespace ModifyTitleTodoOKResponse {
+  export type AsObject = {
   }
 }
 
@@ -335,20 +460,25 @@ export namespace CompleteTodoResponse {
 }
 
 export class CompleteTodoErrorResponse extends jspb.Message {
-  getTodonotfounderror(): ErrorResponse | undefined;
-  setTodonotfounderror(value?: ErrorResponse): CompleteTodoErrorResponse;
-  hasTodonotfounderror(): boolean;
-  clearTodonotfounderror(): CompleteTodoErrorResponse;
+  getUnauthorizederror(): ErrorResponse | undefined;
+  setUnauthorizederror(value?: ErrorResponse): CompleteTodoErrorResponse;
+  hasUnauthorizederror(): boolean;
+  clearUnauthorizederror(): CompleteTodoErrorResponse;
+
+  getSystemunavailableerror(): ErrorResponse | undefined;
+  setSystemunavailableerror(value?: ErrorResponse): CompleteTodoErrorResponse;
+  hasSystemunavailableerror(): boolean;
+  clearSystemunavailableerror(): CompleteTodoErrorResponse;
+
+  getTododoesnotexisterror(): ErrorResponse | undefined;
+  setTododoesnotexisterror(value?: ErrorResponse): CompleteTodoErrorResponse;
+  hasTododoesnotexisterror(): boolean;
+  clearTododoesnotexisterror(): CompleteTodoErrorResponse;
 
   getTodoalreadycompletederror(): ErrorResponse | undefined;
   setTodoalreadycompletederror(value?: ErrorResponse): CompleteTodoErrorResponse;
   hasTodoalreadycompletederror(): boolean;
   clearTodoalreadycompletederror(): CompleteTodoErrorResponse;
-
-  getUnexpectederror(): ErrorResponse | undefined;
-  setUnexpectederror(value?: ErrorResponse): CompleteTodoErrorResponse;
-  hasUnexpectederror(): boolean;
-  clearUnexpectederror(): CompleteTodoErrorResponse;
 
   getErrorCase(): CompleteTodoErrorResponse.ErrorCase;
 
@@ -362,16 +492,18 @@ export class CompleteTodoErrorResponse extends jspb.Message {
 
 export namespace CompleteTodoErrorResponse {
   export type AsObject = {
-    todonotfounderror?: ErrorResponse.AsObject,
+    unauthorizederror?: ErrorResponse.AsObject,
+    systemunavailableerror?: ErrorResponse.AsObject,
+    tododoesnotexisterror?: ErrorResponse.AsObject,
     todoalreadycompletederror?: ErrorResponse.AsObject,
-    unexpectederror?: ErrorResponse.AsObject,
   }
 
   export enum ErrorCase { 
     ERROR_NOT_SET = 0,
-    TODONOTFOUNDERROR = 1,
-    TODOALREADYCOMPLETEDERROR = 2,
-    UNEXPECTEDERROR = 3,
+    UNAUTHORIZEDERROR = 1,
+    SYSTEMUNAVAILABLEERROR = 2,
+    TODODOESNOTEXISTERROR = 3,
+    TODOALREADYCOMPLETEDERROR = 4,
   }
 }
 
@@ -385,6 +517,120 @@ export class CompleteTodoOKResponse extends jspb.Message {
 }
 
 export namespace CompleteTodoOKResponse {
+  export type AsObject = {
+  }
+}
+
+export class UncompleteTodoRequest extends jspb.Message {
+  getId(): string;
+  setId(value: string): UncompleteTodoRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UncompleteTodoRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UncompleteTodoRequest): UncompleteTodoRequest.AsObject;
+  static serializeBinaryToWriter(message: UncompleteTodoRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UncompleteTodoRequest;
+  static deserializeBinaryFromReader(message: UncompleteTodoRequest, reader: jspb.BinaryReader): UncompleteTodoRequest;
+}
+
+export namespace UncompleteTodoRequest {
+  export type AsObject = {
+    id: string,
+  }
+}
+
+export class UncompleteTodoResponse extends jspb.Message {
+  getOk(): UncompleteTodoOKResponse | undefined;
+  setOk(value?: UncompleteTodoOKResponse): UncompleteTodoResponse;
+  hasOk(): boolean;
+  clearOk(): UncompleteTodoResponse;
+
+  getError(): UncompleteTodoErrorResponse | undefined;
+  setError(value?: UncompleteTodoErrorResponse): UncompleteTodoResponse;
+  hasError(): boolean;
+  clearError(): UncompleteTodoResponse;
+
+  getResultCase(): UncompleteTodoResponse.ResultCase;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UncompleteTodoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UncompleteTodoResponse): UncompleteTodoResponse.AsObject;
+  static serializeBinaryToWriter(message: UncompleteTodoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UncompleteTodoResponse;
+  static deserializeBinaryFromReader(message: UncompleteTodoResponse, reader: jspb.BinaryReader): UncompleteTodoResponse;
+}
+
+export namespace UncompleteTodoResponse {
+  export type AsObject = {
+    ok?: UncompleteTodoOKResponse.AsObject,
+    error?: UncompleteTodoErrorResponse.AsObject,
+  }
+
+  export enum ResultCase { 
+    RESULT_NOT_SET = 0,
+    OK = 1,
+    ERROR = 2,
+  }
+}
+
+export class UncompleteTodoErrorResponse extends jspb.Message {
+  getUnauthorizederror(): ErrorResponse | undefined;
+  setUnauthorizederror(value?: ErrorResponse): UncompleteTodoErrorResponse;
+  hasUnauthorizederror(): boolean;
+  clearUnauthorizederror(): UncompleteTodoErrorResponse;
+
+  getSystemunavailableerror(): ErrorResponse | undefined;
+  setSystemunavailableerror(value?: ErrorResponse): UncompleteTodoErrorResponse;
+  hasSystemunavailableerror(): boolean;
+  clearSystemunavailableerror(): UncompleteTodoErrorResponse;
+
+  getTododoesnotexisterror(): ErrorResponse | undefined;
+  setTododoesnotexisterror(value?: ErrorResponse): UncompleteTodoErrorResponse;
+  hasTododoesnotexisterror(): boolean;
+  clearTododoesnotexisterror(): UncompleteTodoErrorResponse;
+
+  getTodoalreadyuncompletederror(): ErrorResponse | undefined;
+  setTodoalreadyuncompletederror(value?: ErrorResponse): UncompleteTodoErrorResponse;
+  hasTodoalreadyuncompletederror(): boolean;
+  clearTodoalreadyuncompletederror(): UncompleteTodoErrorResponse;
+
+  getErrorCase(): UncompleteTodoErrorResponse.ErrorCase;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UncompleteTodoErrorResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UncompleteTodoErrorResponse): UncompleteTodoErrorResponse.AsObject;
+  static serializeBinaryToWriter(message: UncompleteTodoErrorResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UncompleteTodoErrorResponse;
+  static deserializeBinaryFromReader(message: UncompleteTodoErrorResponse, reader: jspb.BinaryReader): UncompleteTodoErrorResponse;
+}
+
+export namespace UncompleteTodoErrorResponse {
+  export type AsObject = {
+    unauthorizederror?: ErrorResponse.AsObject,
+    systemunavailableerror?: ErrorResponse.AsObject,
+    tododoesnotexisterror?: ErrorResponse.AsObject,
+    todoalreadyuncompletederror?: ErrorResponse.AsObject,
+  }
+
+  export enum ErrorCase { 
+    ERROR_NOT_SET = 0,
+    UNAUTHORIZEDERROR = 1,
+    SYSTEMUNAVAILABLEERROR = 2,
+    TODODOESNOTEXISTERROR = 3,
+    TODOALREADYUNCOMPLETEDERROR = 4,
+  }
+}
+
+export class UncompleteTodoOKResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UncompleteTodoOKResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UncompleteTodoOKResponse): UncompleteTodoOKResponse.AsObject;
+  static serializeBinaryToWriter(message: UncompleteTodoOKResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UncompleteTodoOKResponse;
+  static deserializeBinaryFromReader(message: UncompleteTodoOKResponse, reader: jspb.BinaryReader): UncompleteTodoOKResponse;
+}
+
+export namespace UncompleteTodoOKResponse {
   export type AsObject = {
   }
 }
@@ -442,15 +688,20 @@ export namespace DeleteTodoResponse {
 }
 
 export class DeleteTodoErrorResponse extends jspb.Message {
-  getTodonotfounderror(): ErrorResponse | undefined;
-  setTodonotfounderror(value?: ErrorResponse): DeleteTodoErrorResponse;
-  hasTodonotfounderror(): boolean;
-  clearTodonotfounderror(): DeleteTodoErrorResponse;
+  getUnauthorizederror(): ErrorResponse | undefined;
+  setUnauthorizederror(value?: ErrorResponse): DeleteTodoErrorResponse;
+  hasUnauthorizederror(): boolean;
+  clearUnauthorizederror(): DeleteTodoErrorResponse;
 
-  getUnexpectederror(): ErrorResponse | undefined;
-  setUnexpectederror(value?: ErrorResponse): DeleteTodoErrorResponse;
-  hasUnexpectederror(): boolean;
-  clearUnexpectederror(): DeleteTodoErrorResponse;
+  getSystemunavailableerror(): ErrorResponse | undefined;
+  setSystemunavailableerror(value?: ErrorResponse): DeleteTodoErrorResponse;
+  hasSystemunavailableerror(): boolean;
+  clearSystemunavailableerror(): DeleteTodoErrorResponse;
+
+  getTododoesnotexisterror(): ErrorResponse | undefined;
+  setTododoesnotexisterror(value?: ErrorResponse): DeleteTodoErrorResponse;
+  hasTododoesnotexisterror(): boolean;
+  clearTododoesnotexisterror(): DeleteTodoErrorResponse;
 
   getErrorCase(): DeleteTodoErrorResponse.ErrorCase;
 
@@ -464,14 +715,16 @@ export class DeleteTodoErrorResponse extends jspb.Message {
 
 export namespace DeleteTodoErrorResponse {
   export type AsObject = {
-    todonotfounderror?: ErrorResponse.AsObject,
-    unexpectederror?: ErrorResponse.AsObject,
+    unauthorizederror?: ErrorResponse.AsObject,
+    systemunavailableerror?: ErrorResponse.AsObject,
+    tododoesnotexisterror?: ErrorResponse.AsObject,
   }
 
   export enum ErrorCase { 
     ERROR_NOT_SET = 0,
-    TODONOTFOUNDERROR = 1,
-    UNEXPECTEDERROR = 2,
+    UNAUTHORIZEDERROR = 1,
+    SYSTEMUNAVAILABLEERROR = 2,
+    TODODOESNOTEXISTERROR = 3,
   }
 }
 
@@ -538,10 +791,15 @@ export namespace GetAllTodosResponse {
 }
 
 export class GetAllTodosErrorResponse extends jspb.Message {
-  getUnexpectederror(): ErrorResponse | undefined;
-  setUnexpectederror(value?: ErrorResponse): GetAllTodosErrorResponse;
-  hasUnexpectederror(): boolean;
-  clearUnexpectederror(): GetAllTodosErrorResponse;
+  getUnauthorizederror(): ErrorResponse | undefined;
+  setUnauthorizederror(value?: ErrorResponse): GetAllTodosErrorResponse;
+  hasUnauthorizederror(): boolean;
+  clearUnauthorizederror(): GetAllTodosErrorResponse;
+
+  getSystemunavailableerror(): ErrorResponse | undefined;
+  setSystemunavailableerror(value?: ErrorResponse): GetAllTodosErrorResponse;
+  hasSystemunavailableerror(): boolean;
+  clearSystemunavailableerror(): GetAllTodosErrorResponse;
 
   getErrorCase(): GetAllTodosErrorResponse.ErrorCase;
 
@@ -555,12 +813,14 @@ export class GetAllTodosErrorResponse extends jspb.Message {
 
 export namespace GetAllTodosErrorResponse {
   export type AsObject = {
-    unexpectederror?: ErrorResponse.AsObject,
+    unauthorizederror?: ErrorResponse.AsObject,
+    systemunavailableerror?: ErrorResponse.AsObject,
   }
 
   export enum ErrorCase { 
     ERROR_NOT_SET = 0,
-    UNEXPECTEDERROR = 1,
+    UNAUTHORIZEDERROR = 1,
+    SYSTEMUNAVAILABLEERROR = 2,
   }
 }
 
@@ -581,224 +841,6 @@ export class GetAllTodosOKResponse extends jspb.Message {
 export namespace GetAllTodosOKResponse {
   export type AsObject = {
     todosList: Array<Todo.AsObject>,
-  }
-}
-
-export class ModifyTitleTodoRequest extends jspb.Message {
-  getId(): string;
-  setId(value: string): ModifyTitleTodoRequest;
-
-  getTitle(): string;
-  setTitle(value: string): ModifyTitleTodoRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ModifyTitleTodoRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: ModifyTitleTodoRequest): ModifyTitleTodoRequest.AsObject;
-  static serializeBinaryToWriter(message: ModifyTitleTodoRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoRequest;
-  static deserializeBinaryFromReader(message: ModifyTitleTodoRequest, reader: jspb.BinaryReader): ModifyTitleTodoRequest;
-}
-
-export namespace ModifyTitleTodoRequest {
-  export type AsObject = {
-    id: string,
-    title: string,
-  }
-}
-
-export class ModifyTitleTodoResponse extends jspb.Message {
-  getOk(): ModifyTitleTodoOKResponse | undefined;
-  setOk(value?: ModifyTitleTodoOKResponse): ModifyTitleTodoResponse;
-  hasOk(): boolean;
-  clearOk(): ModifyTitleTodoResponse;
-
-  getError(): ModifyTitleTodoErrorResponse | undefined;
-  setError(value?: ModifyTitleTodoErrorResponse): ModifyTitleTodoResponse;
-  hasError(): boolean;
-  clearError(): ModifyTitleTodoResponse;
-
-  getResultCase(): ModifyTitleTodoResponse.ResultCase;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ModifyTitleTodoResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: ModifyTitleTodoResponse): ModifyTitleTodoResponse.AsObject;
-  static serializeBinaryToWriter(message: ModifyTitleTodoResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoResponse;
-  static deserializeBinaryFromReader(message: ModifyTitleTodoResponse, reader: jspb.BinaryReader): ModifyTitleTodoResponse;
-}
-
-export namespace ModifyTitleTodoResponse {
-  export type AsObject = {
-    ok?: ModifyTitleTodoOKResponse.AsObject,
-    error?: ModifyTitleTodoErrorResponse.AsObject,
-  }
-
-  export enum ResultCase { 
-    RESULT_NOT_SET = 0,
-    OK = 1,
-    ERROR = 2,
-  }
-}
-
-export class ModifyTitleTodoErrorResponse extends jspb.Message {
-  getTodonotfounderror(): ErrorResponse | undefined;
-  setTodonotfounderror(value?: ErrorResponse): ModifyTitleTodoErrorResponse;
-  hasTodonotfounderror(): boolean;
-  clearTodonotfounderror(): ModifyTitleTodoErrorResponse;
-
-  getTitleoutofboundserror(): ErrorResponse | undefined;
-  setTitleoutofboundserror(value?: ErrorResponse): ModifyTitleTodoErrorResponse;
-  hasTitleoutofboundserror(): boolean;
-  clearTitleoutofboundserror(): ModifyTitleTodoErrorResponse;
-
-  getUnexpectederror(): ErrorResponse | undefined;
-  setUnexpectederror(value?: ErrorResponse): ModifyTitleTodoErrorResponse;
-  hasUnexpectederror(): boolean;
-  clearUnexpectederror(): ModifyTitleTodoErrorResponse;
-
-  getErrorCase(): ModifyTitleTodoErrorResponse.ErrorCase;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ModifyTitleTodoErrorResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: ModifyTitleTodoErrorResponse): ModifyTitleTodoErrorResponse.AsObject;
-  static serializeBinaryToWriter(message: ModifyTitleTodoErrorResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoErrorResponse;
-  static deserializeBinaryFromReader(message: ModifyTitleTodoErrorResponse, reader: jspb.BinaryReader): ModifyTitleTodoErrorResponse;
-}
-
-export namespace ModifyTitleTodoErrorResponse {
-  export type AsObject = {
-    todonotfounderror?: ErrorResponse.AsObject,
-    titleoutofboundserror?: ErrorResponse.AsObject,
-    unexpectederror?: ErrorResponse.AsObject,
-  }
-
-  export enum ErrorCase { 
-    ERROR_NOT_SET = 0,
-    TODONOTFOUNDERROR = 1,
-    TITLEOUTOFBOUNDSERROR = 2,
-    UNEXPECTEDERROR = 3,
-  }
-}
-
-export class ModifyTitleTodoOKResponse extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ModifyTitleTodoOKResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: ModifyTitleTodoOKResponse): ModifyTitleTodoOKResponse.AsObject;
-  static serializeBinaryToWriter(message: ModifyTitleTodoOKResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ModifyTitleTodoOKResponse;
-  static deserializeBinaryFromReader(message: ModifyTitleTodoOKResponse, reader: jspb.BinaryReader): ModifyTitleTodoOKResponse;
-}
-
-export namespace ModifyTitleTodoOKResponse {
-  export type AsObject = {
-  }
-}
-
-export class UncompleteTodoRequest extends jspb.Message {
-  getId(): string;
-  setId(value: string): UncompleteTodoRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UncompleteTodoRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: UncompleteTodoRequest): UncompleteTodoRequest.AsObject;
-  static serializeBinaryToWriter(message: UncompleteTodoRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UncompleteTodoRequest;
-  static deserializeBinaryFromReader(message: UncompleteTodoRequest, reader: jspb.BinaryReader): UncompleteTodoRequest;
-}
-
-export namespace UncompleteTodoRequest {
-  export type AsObject = {
-    id: string,
-  }
-}
-
-export class UncompleteTodoResponse extends jspb.Message {
-  getOk(): UncompleteTodoOKResponse | undefined;
-  setOk(value?: UncompleteTodoOKResponse): UncompleteTodoResponse;
-  hasOk(): boolean;
-  clearOk(): UncompleteTodoResponse;
-
-  getError(): UncompleteTodoErrorResponse | undefined;
-  setError(value?: UncompleteTodoErrorResponse): UncompleteTodoResponse;
-  hasError(): boolean;
-  clearError(): UncompleteTodoResponse;
-
-  getResultCase(): UncompleteTodoResponse.ResultCase;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UncompleteTodoResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: UncompleteTodoResponse): UncompleteTodoResponse.AsObject;
-  static serializeBinaryToWriter(message: UncompleteTodoResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UncompleteTodoResponse;
-  static deserializeBinaryFromReader(message: UncompleteTodoResponse, reader: jspb.BinaryReader): UncompleteTodoResponse;
-}
-
-export namespace UncompleteTodoResponse {
-  export type AsObject = {
-    ok?: UncompleteTodoOKResponse.AsObject,
-    error?: UncompleteTodoErrorResponse.AsObject,
-  }
-
-  export enum ResultCase { 
-    RESULT_NOT_SET = 0,
-    OK = 1,
-    ERROR = 2,
-  }
-}
-
-export class UncompleteTodoErrorResponse extends jspb.Message {
-  getTodonotfounderror(): ErrorResponse | undefined;
-  setTodonotfounderror(value?: ErrorResponse): UncompleteTodoErrorResponse;
-  hasTodonotfounderror(): boolean;
-  clearTodonotfounderror(): UncompleteTodoErrorResponse;
-
-  getTodoalreadyuncompletederror(): ErrorResponse | undefined;
-  setTodoalreadyuncompletederror(value?: ErrorResponse): UncompleteTodoErrorResponse;
-  hasTodoalreadyuncompletederror(): boolean;
-  clearTodoalreadyuncompletederror(): UncompleteTodoErrorResponse;
-
-  getUnexpectederror(): ErrorResponse | undefined;
-  setUnexpectederror(value?: ErrorResponse): UncompleteTodoErrorResponse;
-  hasUnexpectederror(): boolean;
-  clearUnexpectederror(): UncompleteTodoErrorResponse;
-
-  getErrorCase(): UncompleteTodoErrorResponse.ErrorCase;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UncompleteTodoErrorResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: UncompleteTodoErrorResponse): UncompleteTodoErrorResponse.AsObject;
-  static serializeBinaryToWriter(message: UncompleteTodoErrorResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UncompleteTodoErrorResponse;
-  static deserializeBinaryFromReader(message: UncompleteTodoErrorResponse, reader: jspb.BinaryReader): UncompleteTodoErrorResponse;
-}
-
-export namespace UncompleteTodoErrorResponse {
-  export type AsObject = {
-    todonotfounderror?: ErrorResponse.AsObject,
-    todoalreadyuncompletederror?: ErrorResponse.AsObject,
-    unexpectederror?: ErrorResponse.AsObject,
-  }
-
-  export enum ErrorCase { 
-    ERROR_NOT_SET = 0,
-    TODONOTFOUNDERROR = 1,
-    TODOALREADYUNCOMPLETEDERROR = 2,
-    UNEXPECTEDERROR = 3,
-  }
-}
-
-export class UncompleteTodoOKResponse extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UncompleteTodoOKResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: UncompleteTodoOKResponse): UncompleteTodoOKResponse.AsObject;
-  static serializeBinaryToWriter(message: UncompleteTodoOKResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UncompleteTodoOKResponse;
-  static deserializeBinaryFromReader(message: UncompleteTodoOKResponse, reader: jspb.BinaryReader): UncompleteTodoOKResponse;
-}
-
-export namespace UncompleteTodoOKResponse {
-  export type AsObject = {
   }
 }
 
@@ -834,8 +876,8 @@ export namespace Todo {
 
 export enum TODO_EVENTS { 
   ADDED = 0,
-  COMPLETED = 1,
+  MODIFIED_TITLE = 1,
   DELETED = 2,
-  MODIFIED_TITLE = 3,
+  COMPLETED = 3,
   UNCOMPLETED = 4,
 }

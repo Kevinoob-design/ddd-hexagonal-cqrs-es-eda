@@ -332,8 +332,8 @@ function App(props: { service: TodoServiceClient }): JSX.Element {
         if (response.hasError()) {
           console.log(response);
           const error = response.getError();
-          if (error?.getUnexpectederror()) {
-            const message = error?.getUnexpectederror()?.getMessage();
+          if (error?.getSystemunavailableerror()) {
+            const message = error?.getSystemunavailableerror()?.getMessage();
             if (message)
               setErrorMessage('Title must be at least 3 characters long!');
           } else {

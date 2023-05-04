@@ -8,7 +8,7 @@ import {
   NatsStreamingDomainEventBus,
   NatsStreamingIntegrationEventBus,
 } from '@bitloops/bl-boilerplate-infra-nest-jetstream';
-import { PostgresModule } from '@bitloops/bl-boilerplate-infra-postgres';
+import { MongoModule } from '@bitloops/bl-boilerplate-infra-mongo';
 import { AuthenticationModule as LibAuthenticationModule } from '@lib/bounded-contexts/iam/authentication/authentication.module';
 import { PubSubCommandHandlers, StreamingCommandHandlers } from '@lib/bounded-contexts/iam/authentication/application/command-handlers';
 import { QueryHandlers } from '@lib/bounded-contexts/iam/authentication/application/query-handlers';
@@ -22,12 +22,12 @@ import {
   StreamingDomainEventBusToken,
   StreamingIntegrationEventBusToken,
 } from '@lib/bounded-contexts/iam/authentication/constants';
-import { PostgresUserWriteRepository } from './repositories/postgres-user-write.repository';
+import { MongoUserWriteRepository } from './repositories/mongo-user-write.repository';
 
 const providers = [
   {
     provide: UserWriteRepoPortToken,
-    useClass: PostgresUserWriteRepository,
+    useClass: MongoUserWriteRepository,
   },
   {
     provide: PubSubQueryBusToken,
@@ -54,7 +54,7 @@ const providers = [
   imports: [
     LibAuthenticationModule.register({
       inject: [...providers],
-      imports: [PostgresModule],
+      imports: [MongoModule],
     }),
     JetstreamModule.forFeature({
       moduleOfHandlers: AuthenticationModule,

@@ -8,7 +8,7 @@
         ok,
       } from '@bitloops/bl-boilerplate-core';
       import { Injectable, Inject } from '@nestjs/common';
-      import { Pool } from 'pg';
+      import { Collection, MongoClient } from 'mongodb';
       import * as jwtwebtoken from 'jsonwebtoken';
       import { UserEntity } from '@lib/bounded-contexts/iam/authentication/domain/user.entity';
       import { UserWriteRepoPort } from '@lib/bounded-contexts/iam/authentication/ports/user-write.repo-port';
@@ -16,45 +16,27 @@
       import { AuthEnvironmentVariables } from '@src/config/auth.configuration';
       import { StreamingDomainEventBusToken } from '@lib/bounded-contexts/iam/authentication/constants';
       
+      const MONGO_DB_DATABASE = process.env.MONGO_DB_DATABASE || 'iam';
+      const MONGO_DB_USER_COLLECTION =
+        process.env.MONGO_DB_USER_COLLECTION || 'users';
+      
       @Injectable()
-      export class PostgresUserWriteRepository implements UserWriteRepoPort {
+      export class MongoUserWriteRepository implements UserWriteRepoPort {
+        private collectionName = MONGO_DB_USER_COLLECTION;
+        private dbName = MONGO_DB_DATABASE;
+        private collection: Collection;
         private JWT_SECRET: string;
       
         constructor(
-          @Inject('POSTGRES_DB_CONNECTION') private client: Pool,
+          @Inject('MONGO_DB_CONNECTION') private client: MongoClient,
           @Inject(StreamingDomainEventBusToken)
           private readonly domainEventBus: Infra.EventBus.IEventBus,
           private configService: ConfigService<AuthEnvironmentVariables, true>,
         ) {
+          this.collection = this.client
+            .db(this.dbName)
+            .collection(this.collectionName);
           this.JWT_SECRET = this.configService.get('jwtSecret', { infer: true });
-        }
-      
-        @Application.Repo.Decorators.ReturnUnexpectedError()
-        async getById(
-          id: Domain.UUIDv4,
-        ): Promise<Either<UserEntity | null, Application.Repo.Errors.Unexpected>> {
-          const ctx = asyncLocalStorage.getStore()?.get('context');
-          const { jwt } = ctx;
-          let jwtPayload: null | any = null;
-          try {
-            jwtPayload = jwtwebtoken.verify(jwt, this.JWT_SECRET);
-          } catch (err) {
-            throw new Error('Invalid JWT!');
-          }
-          const { rows } = await this.client.query(
-            'SELECT * FROM users WHERE id = $1',
-            [id.toString()],
-          );
-      
-          if (rows.length === 0) {
-            return ok(null);
-          }
-      
-          if (rows[0].id !== jwtPayload.sub) {
-            throw new Error('Invalid userId');
-          }
-      
-          return ok(UserEntity.fromPrimitives(rows[0]));
         }
       
         @Application.Repo.Decorators.ReturnUnexpectedError()
@@ -74,9 +56,13 @@
             throw new Error('Unauthorized userId');
           }
           const { id, ...userInfo } = userPrimitives;
-          await this.client.query(
-            'UPDATE users SET email = $1, password = $2 WHERE id = $3',
-            [userInfo.email, userInfo.password, id],
+          await this.collection.updateOne(
+            {
+              _id: id as any,
+            },
+            {
+              $set: userInfo,
+            },
           );
       
           this.domainEventBus.publish(user.domainEvents);
@@ -91,15 +77,48 @@
         }
       
         @Application.Repo.Decorators.ReturnUnexpectedError()
+        async getById(
+          id: Domain.UUIDv4,
+        ): Promise<Either<UserEntity | null, Application.Repo.Errors.Unexpected>> {
+          const ctx = asyncLocalStorage.getStore()?.get('context');
+          const { jwt } = ctx;
+          let jwtPayload: null | any = null;
+          try {
+            jwtPayload = jwtwebtoken.verify(jwt, this.JWT_SECRET);
+          } catch (err) {
+            throw new Error('Invalid JWT!');
+          }
+          const result = await this.collection.findOne({
+            _id: id.toString() as any,
+          });
+      
+          if (!result) {
+            return ok(null);
+          }
+      
+          if (result.id !== jwtPayload.sub) {
+            throw new Error('Invalid userId');
+          }
+      
+          const { _id, ...todo } = result as any;
+          return ok(
+            UserEntity.fromPrimitives({
+              ...todo,
+              id: _id.toString(),
+            }),
+          );
+        }
+      
+        @Application.Repo.Decorators.ReturnUnexpectedError()
         async save(
           user: UserEntity,
         ): Promise<Either<void, Application.Repo.Errors.Unexpected>> {
           const createdUser = user.toPrimitives();
       
-          await this.client.query(
-            'INSERT INTO users (id, email, password) VALUES ($1, $2, $3)',
-            [createdUser.id, createdUser.email, createdUser.password],
-          );
+          await this.collection.insertOne({
+            _id: createdUser.id as any,
+            ...createdUser,
+          });
       
           this.domainEventBus.publish(user.domainEvents);
           return ok();

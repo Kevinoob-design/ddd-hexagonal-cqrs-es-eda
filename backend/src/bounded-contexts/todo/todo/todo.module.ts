@@ -23,8 +23,8 @@ import {
   StreamingDomainEventBusToken,
   StreamingIntegrationEventBusToken,
 } from '@lib/bounded-contexts/todo/todo/constants';
-import { MongoTodoReadRepository } from './repositories/mongo-todo-read.repository';
 import { MongoTodoWriteRepository } from './repositories/mongo-todo-write.repository';
+import { MongoTodoReadRepository } from './repositories/mongo-todo-read.repository';
 
 const providers = [
   {
@@ -64,10 +64,10 @@ const providers = [
     }),
     JetstreamModule.forFeature({
       moduleOfHandlers: TodoModule,
+      streamingIntegrationEventHandlers: [...StreamingIntegrationEventHandlers],
+      streamingDomainEventHandlers: [...StreamingDomainEventHandlers],
       streamingCommandHandlers: [...StreamingCommandHandlers],
       pubSubCommandHandlers: [...PubSubCommandHandlers],
-      streamingDomainEventHandlers: [...StreamingDomainEventHandlers],
-      streamingIntegrationEventHandlers: [...StreamingIntegrationEventHandlers],
       pubSubQueryHandlers: [...QueryHandlers],
     }),
   ],

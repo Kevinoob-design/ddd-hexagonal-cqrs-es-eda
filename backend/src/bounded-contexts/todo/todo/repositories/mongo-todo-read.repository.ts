@@ -1,6 +1,6 @@
 
-import { Injectable, Inject } from '@nestjs/common';
 import { Collection, MongoClient } from 'mongodb';
+import { Inject, Injectable } from '@nestjs/common';
 import * as jwtwebtoken from 'jsonwebtoken';
 import { TodoReadRepoPort } from '@lib/bounded-contexts/todo/todo/ports/todo-read.repo-port';
 import { TodoReadModel } from '@lib/bounded-contexts/todo/todo/domain/todo.read-model';
@@ -13,12 +13,17 @@ import {
   ok,
 } from '@bitloops/bl-boilerplate-core';
 
+const MONGO_DB_DATABASE = process.env.MONGO_DB_DATABASE || 'todo';
+const MONGO_DB_TODO_COLLECTION =
+  process.env.MONGO_DB_TODO_COLLECTION || 'todos';
+
 @Injectable()
 export class MongoTodoReadRepository implements TodoReadRepoPort {
-  private collectionName = process.env.MONGO_DB_TODO_COLLECTION || 'todos';
-  private dbName = process.env.MONGO_DB_DATABASE || 'todo';
+  private collectionName = MONGO_DB_TODO_COLLECTION;
+  private dbName = MONGO_DB_DATABASE;
   private collection: Collection;
   private JWT_SECRET: string;
+
   constructor(
     @Inject('MONGO_DB_CONNECTION') private client: MongoClient,
     private configService: ConfigService<AuthEnvironmentVariables, true>,
@@ -32,9 +37,7 @@ export class MongoTodoReadRepository implements TodoReadRepoPort {
   @Application.Repo.Decorators.ReturnUnexpectedError()
   async getById(
     id: string,
-  ): Promise<
-    Either<TodoReadModel | null, Application.Repo.Errors.Unexpected>
-  > {
+  ): Promise<Either<TodoReadModel | null, Application.Repo.Errors.Unexpected>> {
     const ctx = asyncLocalStorage.getStore()?.get('context');
     const { jwt } = ctx;
     let jwtPayload: null | any = null;
@@ -43,25 +46,25 @@ export class MongoTodoReadRepository implements TodoReadRepoPort {
     } catch (err) {
       throw new Error('Invalid JWT!');
     }
-    const result = await this.collection.findOne({
-      _id: id.toString() as any,
-    });
-
-    if (!result) {
-      return ok(null);
-    }
-
-    if (result.userId !== jwtPayload.sub) {
+    const userId = jwtPayload.sub;
+    if (!userId) {
       throw new Error('Invalid userId');
     }
-
-    const { _id, ...todo } = result as any;
-    return ok(
-      TodoReadModel.fromPrimitives({
-        ...todo,
-        id: _id.toString(),
-      }),
-    );
+    const todo = await this.collection.findOne({
+      _id: id.toString() as any,
+    });
+    if (!todo) {
+      return ok(null);
+    }
+    if (todo.userId !== userId) {
+      throw new Error('Invalid userId');
+    }
+    return ok({
+      id: todo._id.toString(),
+      userId: todo.userId,
+      title: todo.title,
+      completed: todo.completed,
+    });
   }
 
   @Application.Repo.Decorators.ReturnUnexpectedError()
@@ -81,18 +84,15 @@ export class MongoTodoReadRepository implements TodoReadRepoPort {
       throw new Error('Invalid userId');
     }
     const todos = await this.collection
-      .find({ userId: { id: userId } })
+      .find({ userId: userId })
       .toArray();
     return ok(
-      todos.map((todo) => {
-        const res = {
-          id: todo._id.toString(),
-          userId: todo.userId.id,
-          title: todo.title.title,
-          completed: todo.completed,
-        };
-        return res;
-      }),
+      todos.map((todo) => ({
+        id: todo._id.toString(),
+        userId: todo.userId,
+        title: todo.title,
+        completed: todo.completed,
+      })),
     );
   }
 }

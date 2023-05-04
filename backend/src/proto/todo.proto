@@ -5,9 +5,9 @@
   
   service TodoService {
     rpc Add(AddTodoRequest) returns (AddTodoResponse);
+    rpc ModifyTitle(ModifyTitleTodoRequest) returns (ModifyTitleTodoResponse);
     rpc Complete(CompleteTodoRequest) returns (CompleteTodoResponse);
     rpc Uncomplete(UncompleteTodoRequest) returns (UncompleteTodoResponse);
-    rpc ModifyTitle(ModifyTitleTodoRequest) returns (ModifyTitleTodoResponse);
     rpc Delete(DeleteTodoRequest) returns (DeleteTodoResponse);
     rpc GetAll(GetAllTodosRequest) returns (GetAllTodosResponse);
     rpc InitializeSubscriptionConnection(InitializeConnectionRequest) returns (InitializeConnectionResponse);
@@ -29,9 +29,9 @@
   
   enum TODO_EVENTS {
     ADDED = 0;
-    COMPLETED = 1;
+    MODIFIED_TITLE = 1;
     DELETED = 2;
-    MODIFIED_TITLE = 3;
+    COMPLETED = 3;
     UNCOMPLETED = 4;
   }
   
@@ -43,9 +43,9 @@
   message OnEvent {
     oneof event {
       Todo onAdded = 1;
-      Todo onCompleted = 2;
+      Todo onModifiedTitle = 2;
       Todo onDeleted = 3;
-      Todo onModifiedTitle = 4;
+      Todo onCompleted = 4;
       Todo onUncompleted = 5;
     }
   }
@@ -68,73 +68,14 @@
   
   message AddTodoErrorResponse {
     oneof error {
-      ErrorResponse titleOutOfBoundsError = 1;
-      ErrorResponse unexpectedError = 2;
+      ErrorResponse unauthorizedError = 1;
+      ErrorResponse systemUnavailableError = 2;
+      ErrorResponse invalidTitleLengthError = 3;
     }
   }
   
   message AddTodoOKResponse {
     string id = 1;
-  }
-  
-  message CompleteTodoRequest {
-    string id = 1;
-  }
-  
-  message CompleteTodoResponse {
-    oneof result {
-      CompleteTodoOKResponse ok = 1;
-      CompleteTodoErrorResponse error = 2;
-    }
-  }
-  
-  message CompleteTodoErrorResponse {
-    oneof error {
-      ErrorResponse todoNotFoundError = 1;
-      ErrorResponse todoAlreadyCompletedError = 2;
-      ErrorResponse unexpectedError = 3;
-    }
-  }
-  
-  message CompleteTodoOKResponse {}
-  
-  message DeleteTodoRequest {
-    string id = 1;
-  }
-  
-  message DeleteTodoResponse {
-    oneof result {
-      DeleteTodoOKResponse ok = 1;
-      DeleteTodoErrorResponse error = 2;
-    }
-  }
-  
-  message DeleteTodoErrorResponse {
-    oneof error {
-      ErrorResponse todoNotFoundError = 1;
-      ErrorResponse unexpectedError = 2;
-    }
-  }
-  
-  message DeleteTodoOKResponse {}
-  
-  message GetAllTodosRequest {}
-  
-  message GetAllTodosResponse {
-    oneof result {
-      GetAllTodosOKResponse ok = 1;
-      GetAllTodosErrorResponse error = 2;
-    }
-  }
-  
-  message GetAllTodosErrorResponse {
-    oneof error {
-      ErrorResponse unexpectedError = 1;
-    }
-  }
-  
-  message GetAllTodosOKResponse {
-    repeated Todo todos = 1;
   }
   
   message ModifyTitleTodoRequest {
@@ -151,13 +92,36 @@
   
   message ModifyTitleTodoErrorResponse {
     oneof error {
-      ErrorResponse todoNotFoundError = 1;
-      ErrorResponse titleOutOfBoundsError = 2;
-      ErrorResponse unexpectedError = 3;
+      ErrorResponse unauthorizedError = 1;
+      ErrorResponse systemUnavailableError = 2;
+      ErrorResponse todoDoesNotExistError = 3;
+      ErrorResponse invalidTitleLengthError = 4;
     }
   }
   
   message ModifyTitleTodoOKResponse {}
+  
+  message CompleteTodoRequest {
+    string id = 1;
+  }
+  
+  message CompleteTodoResponse {
+    oneof result {
+      CompleteTodoOKResponse ok = 1;
+      CompleteTodoErrorResponse error = 2;
+    }
+  }
+  
+  message CompleteTodoErrorResponse {
+    oneof error {
+      ErrorResponse unauthorizedError = 1;
+      ErrorResponse systemUnavailableError = 2;
+      ErrorResponse todoDoesNotExistError = 3;
+      ErrorResponse todoAlreadyCompletedError = 4;
+    }
+  }
+  
+  message CompleteTodoOKResponse {}
   
   message UncompleteTodoRequest {
     string id = 1;
@@ -172,13 +136,55 @@
   
   message UncompleteTodoErrorResponse {
     oneof error {
-      ErrorResponse todoNotFoundError = 1;
-      ErrorResponse todoAlreadyUncompletedError = 2;
-      ErrorResponse unexpectedError = 3;
+      ErrorResponse unauthorizedError = 1;
+      ErrorResponse systemUnavailableError = 2;
+      ErrorResponse todoDoesNotExistError = 3;
+      ErrorResponse todoAlreadyUncompletedError = 4;
     }
   }
   
   message UncompleteTodoOKResponse {}
+  
+  message DeleteTodoRequest {
+    string id = 1;
+  }
+  
+  message DeleteTodoResponse {
+    oneof result {
+      DeleteTodoOKResponse ok = 1;
+      DeleteTodoErrorResponse error = 2;
+    }
+  }
+  
+  message DeleteTodoErrorResponse {
+    oneof error {
+      ErrorResponse unauthorizedError = 1;
+      ErrorResponse systemUnavailableError = 2;
+      ErrorResponse todoDoesNotExistError = 3;
+    }
+  }
+  
+  message DeleteTodoOKResponse {}
+  
+  message GetAllTodosRequest {}
+  
+  message GetAllTodosResponse {
+    oneof result {
+      GetAllTodosOKResponse ok = 1;
+      GetAllTodosErrorResponse error = 2;
+    }
+  }
+  
+  message GetAllTodosErrorResponse {
+    oneof error {
+      ErrorResponse unauthorizedError = 1;
+      ErrorResponse systemUnavailableError = 2;
+    }
+  }
+  
+  message GetAllTodosOKResponse {
+    repeated Todo todos = 1;
+  }
   
   message Todo {
     string id = 1;
