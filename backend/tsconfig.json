@@ -23,6 +23,7 @@
       "@config/*": ["src/configs/*"],
       "@bitloops/*": ["src/bitloops/*"],
       "@lib": ["src/lib/*"],
+      "@packages/*": ["src/packages/*"],
       "@tests/*": ["tests/*"]
     }
   }

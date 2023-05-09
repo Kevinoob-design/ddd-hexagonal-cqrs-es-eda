@@ -14,6 +14,7 @@ import { TodoWriteRepoPort } from '../../ports/todo-write.repo-port';
 import { TodoWriteRepoPortToken } from '../../constants';
 import { UserIdVO } from '../../domain/user-id.value-object';
 import { Traceable } from '@bitloops/bl-boilerplate-infra-telemetry';
+import { GherkinPackage } from '@packages/GherkinPackage';
 
 type AddTodoUseCaseResponse = Either<
   string,
@@ -61,6 +62,8 @@ export class AddTodoCommandHandler
     if (todo.isFail()) {
       return fail(todo.value);
     }
+    const prime = GherkinPackage.randomPrime();
+    console.log({ prime });
 
     const saveResult = await this.todoRepo.save(todo.value);
     if (saveResult.isFail()) {
